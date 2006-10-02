@@ -1,0 +1,108 @@
+Introduction
+============
+
+Lets start by importing some modules we will be using:
+
+  >>> from Products.OpenId.store import ZopeStore
+  >>> from openid.association import Association
+  >>> import time
+
+Next we create a store object:
+
+  >>> store = ZopeStore()
+
+The zope store is a smart storage implementation:
+
+  >>> store.isDumb()
+  False
+
+
+Associations
+============
+
+Lets create a new association:
+
+  >>> now = int(time.time())
+  >>> a = Association(handle="handle", secret="secret", issued=now,
+  ...                 lifetime=600, assoc_type="HMAC-SHA1")
+
+We can store the association and retrieve it via a server_url and its handle:
+
+  >>> store.storeAssociation("http://localhost", a)
+  >>> b = store.getAssociation("http://localhost", "handle")
+  >>> a == b
+  True
+
+If we ask for an association with a None handle the store should still
+return an assocation for the server:
+
+  >>> b = store.getAssociation("http://localhost", None)
+  >>> a == b
+  True
+
+Trying to retrieve a non-existing association should return None:
+
+  >>> store.getAssociation("http://nothere") is None
+  True
+  >>> store.getAssociation("http://localhost", "nothere") is None
+  True
+
+Associations can be removed based on their server_url and handle. The
+return value for removeAssociation indicates if an assocation has been
+removed.
+
+  >>> store.removeAssociation("http://localhost", "handle")
+  True
+  >>> store.removeAssociation("http://localhost", "handle")
+  False
+
+In an attempt to clean up expired associations retrieving them will
+automatically remove them:
+
+  >>> a = Association(handle="handle", secret="secret", issued=now-10,
+  ...                 lifetime=5, assoc_type="HMAC-SHA1")
+  >>> store.storeAssociation("http://localhost", a)
+  >>> store.getAssociation("http://localhost", "handle") is not None
+  True
+  >>> store.getAssociation("http://localhost", "handle") is not None
+  False
+
+Nonces
+======
+
+OpenId uses nonces, which are basically ids used to track outstanding
+requests. A nonce is a strin.
+
+Storing nonces is simple, and a nonce can be stored multiple times:
+
+  >>> store.storeNonce("one")
+  >>> store.storeNonce("two")
+  >>> store.storeNonce("two")
+
+Using a nonce means checking if a nonce is in the store and removing it
+if so:
+
+  >>> store.useNonce("one")
+  True
+  >>> store.useNonce("one")
+  False
+
+Even if a nonce is stored twice using it will completely remove it:
+
+  >>> store.useNonce("two")
+  True
+  >>> store.useNonce("two")
+  False
+
+
+Authentication keys
+===================
+Each store gets a unique authentication key:
+
+  >>> isinstance(store.getAuthKey(), str)
+  True
+  >>> other = ZopeStore()
+  >>> other.getAuthKey() == store.getAuthKey()
+  False
+
+

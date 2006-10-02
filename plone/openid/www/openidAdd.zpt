@@ -1,0 +1,38 @@
+<html>
+  <body>
+    <h1 tal:replace="structure here/manage_page_header">Header</h1>
+
+    <h2 tal:define="form_title string:Add OpenId plugin"
+        tal:replace="structure here/manage_form_title">Form Title</h2>
+
+    <p class="form-help">
+      The OpenID plugin adds support for the OpenID authentication system
+      to Zope. 
+    </p>
+
+    <form action="addOpenIdPlugin" method="post">
+      <table>
+        <tr>
+          <td class="form-label">Id</td>
+          <td><input type="text" name="id"></td>
+        </tr>
+        <tr>
+          <td class="form-label">Title</td>
+          <td><input type="text" name="title"></td>
+        </tr>
+        <tr>
+          <td class="form-label">Trust root</td>
+          <td><input type="text" name="trust_root"></td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <div class="form-element">
+              <input type="submit" value="add OpenId plugin"/>
+            </div>
+          </td>
+        </tr>
+
+
+  </body>
+</html>
+

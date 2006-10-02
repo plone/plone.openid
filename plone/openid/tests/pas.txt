@@ -1,0 +1,22 @@
+Pluggable Authentication Service plugin
+=======================================
+
+Lets start with some initial setup:
+
+  >>> from Products.Five.testbrowser import Browser
+  >>> browser = Browser()
+  >>> browser.handleErrors = False
+
+Let us log all exceptions, which is useful for debugging. 
+
+  >>> self.portal.error_log._ignored_exceptions = ()
+  >>> self.portal.left_slots = self.portal.right_slots = []
+
+
+Login challenge
+---------------
+
+The login sequence works by hooking into a form submit containing an
+identity URL and redirecting to an OpenID server.
+
+  >>> browser.
