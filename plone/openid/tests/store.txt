@@ -3,7 +3,7 @@ Introduction
 
 Lets start by importing some modules we will be using:
 
-  >>> from Products.OpenId.store import ZopeStore
+  >>> from plone.openid.store import ZopeStore
   >>> from openid.association import Association
   >>> import time
 

@@ -1,4 +1,4 @@
-from Products.OpenId.util import GenerateSecret
+from plone.openid.util import GenerateSecret
 from openid.store.interface import OpenIDStore
 from openid.association import Association
 from BTrees.OIBTree import OITreeSet

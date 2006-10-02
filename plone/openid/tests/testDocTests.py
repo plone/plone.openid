@@ -9,6 +9,6 @@ def test_suite():
     from zope.testing.doctestunit import DocTestSuite
     return unittest.TestSuite((
 	    FunctionalDocFileSuite("store.txt",
-		    package="Products.OpenId.tests"),
+		    package="plone.openid.tests"),
             ))
 

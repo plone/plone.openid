@@ -4,9 +4,9 @@ from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.interfaces.plugins \
                 import IAuthenticationPlugin
-from plone.OpenId.interfaces import IOpenIdExtractionPlugin
-from plone.OpenId.util import GenerateSecret
-from plone.OpenId.store import ZopeStore
+from plone.openid.interfaces import IOpenIdExtractionPlugin
+from plone.openid.util import GenerateSecret
+from plone.openid.store import ZopeStore
 from zExceptions import Redirect
 import transaction
 from urljr.fetchers import HTTPFetchingError
