@@ -17,6 +17,17 @@ ZopeTestCase.close(app)
 
 
 class TestOpenIdExtraction(ZopeTestCase.ZopeTestCase):
+    server_response={
+            "openid.mode"              : "id_res",
+            "nonce"                    : "nonce",
+            "openid.identity"          : "http://plone.myopenid.com",
+            "openid.assoc_handle"      : "assoc_handle",
+            "openid.return_to"         : "return_to",
+            "openid.signed"            : "signed",
+            "openid.sig"               : "sig",
+            "openid.invalidate_handle" : "invalidate_handle",
+            }
+
     def afterSetUp(self):
         request = self.app.REQUEST
         sdm = self.app.session_data_manager
@@ -28,11 +39,29 @@ class TestOpenIdExtraction(ZopeTestCase.ZopeTestCase):
         creds=self.app.openid.extractCredentials(self.app.REQUEST)
         self.assertEqual(creds, {})
 
+
     def testRedirect(self):
         self.app.REQUEST.form["__ac_identity_url"]="http://plone.myopenid.com"
         self.assertRaises(Redirect,
                 self.app.openid.extractCredentials,
                 self.app.REQUEST)
+
+
+    def testOpenIdResponse(self):
+        self.app.REQUEST.form.update(self.server_response)
+        creds=self.app.openid.extractCredentials(self.app.REQUEST)
+	self.assertEqual(creds["openid.identity"], "http://plone.myopenid.com")
+	self.assertEqual(creds["openid.mode"], "id_res")
+	self.assertEqual(creds["openid.return_to"], "return_to")
+
+
+    def testPriorityies(self):
+        self.app.REQUEST.form.update(self.server_response)
+        self.app.REQUEST.form["__ac_identity_url"]="http://plone.myopenid.com"
+        self.assertRaises(Redirect,
+                self.app.openid.extractCredentials,
+                self.app.REQUEST)
+
 
 
 def test_suite():
