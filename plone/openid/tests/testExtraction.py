@@ -33,7 +33,8 @@ class TestOpenIdExtraction(ZopeTestCase.ZopeTestCase):
         sdm = self.app.session_data_manager
         request.set('SESSION', sdm.getSessionData())
         self.session = request.SESSION
-	self.app._setObject("openid", OpenIdPlugin("openid"))
+        self.app._setObject("openid", OpenIdPlugin("openid"))
+
 
     def testEmptyExtraction(self):
         creds=self.app.openid.extractCredentials(self.app.REQUEST)
@@ -41,21 +42,38 @@ class TestOpenIdExtraction(ZopeTestCase.ZopeTestCase):
 
 
     def testRedirect(self):
+        """Test if a redirect is generated for a login attempt.
+        This test requires a working internet connection!
+        """
         self.app.REQUEST.form["__ac_identity_url"]="http://plone.myopenid.com"
         self.assertRaises(Redirect,
                 self.app.openid.extractCredentials,
                 self.app.REQUEST)
 
 
-    def testOpenIdResponse(self):
+    def testPositiveOpenIdResponse(self):
+        """Test if a positive authentication is extracted.
+        """
         self.app.REQUEST.form.update(self.server_response)
         creds=self.app.openid.extractCredentials(self.app.REQUEST)
-	self.assertEqual(creds["openid.identity"], "http://plone.myopenid.com")
-	self.assertEqual(creds["openid.mode"], "id_res")
-	self.assertEqual(creds["openid.return_to"], "return_to")
+        self.assertEqual(creds["openid.identity"], "http://plone.myopenid.com")
+        self.assertEqual(creds["openid.mode"], "id_res")
+        self.assertEqual(creds["openid.return_to"], "return_to")
 
 
-    def testPriorityies(self):
+    def testNegativeOpenIdResponse(self):
+        """Check if a cancelled authentication request is correctly ignored.
+        """
+        self.app.REQUEST.form.update(self.server_response)
+        self.app.REQUEST.form["openid.mode"]="cancel"
+        creds=self.app.openid.extractCredentials(self.app.REQUEST)
+        self.assertEqual(creds, {})
+
+
+    def testPriorities(self):
+        """Check if a new login identity has preference over an existing login.
+        """
+
         self.app.REQUEST.form.update(self.server_response)
         self.app.REQUEST.form["__ac_identity_url"]="http://plone.myopenid.com"
         self.assertRaises(Redirect,
