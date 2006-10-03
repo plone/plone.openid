@@ -1,0 +1,15 @@
+Metadata-Version: 1.0
+Name: plone.openid
+Version: 0.1dev-r11030
+Summary: OpenID authentication support for PAS
+Home-page: http://svn.plone.org/svn/plone/plone.openid
+Author: Plone Foundation
+Author-email: plone-developers@lists.sourceforge.net
+License: GPL
+Description: UNKNOWN
+Keywords: PAS openid
+Platform: UNKNOWN
+Classifier: Framework :: Zope2
+Classifier: Framework :: Zope3
+Classifier: Programming Language :: Python
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
