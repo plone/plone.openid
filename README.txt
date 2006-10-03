@@ -1,6 +1,12 @@
 OpenID PAS support
 ==================
 
+Introduction
+------------
+This product implements OpenID authentication support for Zope via a
+Pluggable Authentication Service plugin. For more information on OpenID see
+http://www.openidenabled.com/ .
+
 Installing plone.openid
 -----------------------
 
