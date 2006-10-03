@@ -1,6 +1,25 @@
 OpenID PAS support
 ==================
 
+Installing plone.openid
+-----------------------
+
+This package is made to be used as a normal python package within Zope 2. This 
+is only supported in Zope 2.10 or later. If you are using Zope 2.8 or Zope 2.9
+you can install the pythonproducts package from
+http://dev.serverzen.com/site/projects/pythonproducts to add python product
+support to your Zope.
+
+After installing this product in your python path it needs to be registered
+in your Zope instance. This can be done by putting a
+plone.openid-configure.zcml file in the etc/pakage-includes directory with
+this content::
+
+  <include package="plone.openid" />
+
+
+Other stuff
+-----------
 The OpenID authentication flow goes like this:
 
 - user submits a ID (which is a URL) to you site
