@@ -8,6 +8,8 @@ from zExceptions import Redirect
 
 class TestOpenIdExtraction(OpenIdTestCase):
     def testEmptyExtraction(self):
+        """Test if we do not invent credentials out of thin air.
+        """
         creds=self.app.openid.extractCredentials(self.app.REQUEST)
         self.assertEqual(creds, {})
 
