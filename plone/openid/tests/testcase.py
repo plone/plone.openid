@@ -7,6 +7,7 @@ from plone.openid.tests.consumer import PatchPlugin
 PatchPlugin(OpenIdPlugin)
 
 class OpenIdTestCase(ZopeTestCase.ZopeTestCase):
+    identity = "http://plone.myopenid.com"
     server_response={
             "openid.mode"              : "id_res",
             "nonce"                    : "nonce",
