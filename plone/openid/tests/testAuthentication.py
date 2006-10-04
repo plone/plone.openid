@@ -8,7 +8,7 @@ from zExceptions import Redirect
 
 class TestOpenIdAuthentication(OpenIdTestCase):
     def buildServerResponse(self):
-	credentials={}
+        credentials={}
         for field in [ "nonce", "openid.assoc_handle", "openid.return_to",
                         "openid.signed", "openid.sig",
                         "openid.invalidate_handle", "openid.mode"]:
@@ -50,7 +50,7 @@ class TestOpenIdAuthentication(OpenIdTestCase):
         credentials=self.buildServerResponse()
         creds=self.app.openid.authenticateCredentials(credentials)
         self.assertEqual(creds, (self.identity, self.identity))
-	
+
 
     def testIncompleteServerAuthentication(self):
         """Test authentication of OpenID server responses.
@@ -59,7 +59,7 @@ class TestOpenIdAuthentication(OpenIdTestCase):
         del credentials["openid.sig"]
         creds=self.app.openid.authenticateCredentials(credentials)
         self.assertEqual(creds, None)
-	
+
 
 def test_suite():
     from unittest import TestSuite, makeSuite
