@@ -1,0 +1,1 @@
+python-openid >= 1.0.4
