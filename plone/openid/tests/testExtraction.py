@@ -4,17 +4,11 @@ if __name__ == '__main__':
 
 from Testing import ZopeTestCase
 from plone.openid.plugins.oid import OpenIdPlugin
+from plone.openid.tests.consumer import PatchPlugin
 from zExceptions import Redirect
 
-# Open ZODB connection
-app = ZopeTestCase.app()
-
-# Set up sessioning objects
-ZopeTestCase.utils.setupCoreSessions(app)
-
-# Close ZODB connection
-ZopeTestCase.close(app)
-
+# Use a mock consumer for the OpenId plugin
+PatchPlugin(OpenIdPlugin)
 
 class TestOpenIdExtraction(ZopeTestCase.ZopeTestCase):
     server_response={
@@ -29,10 +23,6 @@ class TestOpenIdExtraction(ZopeTestCase.ZopeTestCase):
             }
 
     def afterSetUp(self):
-        request = self.app.REQUEST
-        sdm = self.app.session_data_manager
-        request.set('SESSION', sdm.getSessionData())
-        self.session = request.SESSION
         self.app._setObject("openid", OpenIdPlugin("openid"))
 
 
