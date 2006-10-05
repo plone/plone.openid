@@ -11,10 +11,10 @@ setup(name='plone.openid',
       # Get more strings from http://www.python.org/pypi?%3Aaction=list_classifiers
       classifiers=[
         "Framework :: Zope2",
-	"License :: OSI Approved :: GNU General Public License (GPL)",
+        "License :: OSI Approved :: GNU General Public License (GPL)",
         "Programming Language :: Python",
         "Topic :: Software Development :: Libraries :: Python Modules",
-	"Topic :: System :: Systems Administration :: Authentication/Directory",
+        "Topic :: System :: Systems Administration :: Authentication/Directory",
         ],
       keywords='PAS openid',
       author='Plone Foundation',
@@ -26,9 +26,9 @@ setup(name='plone.openid',
       include_package_data=True,
       zip_safe=False,
       install_requires=[
-	"python-openid >= 1.1.1",
-	"python-yadis >= 1.0.1",
-	"python-urljr >= 1.0.0",
+        "python-openid >= 1.1.1",
+        "python-yadis >= 1.0.1",
+        "python-urljr >= 1.0.0",
       ],
       entry_points="""
       # -*- Entry points: -*-
