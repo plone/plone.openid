@@ -26,7 +26,9 @@ setup(name='plone.openid',
       include_package_data=True,
       zip_safe=False,
       install_requires=[
-	"python-openid >= 1.0.4"
+	"python-openid >= 1.1.1",
+	"python-yadis >= 1.0.1",
+	"python-urljr >= 1.0.0",
       ],
       entry_points="""
       # -*- Entry points: -*-
