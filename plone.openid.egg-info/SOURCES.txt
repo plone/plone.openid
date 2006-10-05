@@ -25,11 +25,11 @@ plone/openid/plugins/oid.py
 plone/openid/tests/__init__.py
 plone/openid/tests/consumer.py
 plone/openid/tests/framework.py
+plone/openid/tests/oitestcase.py
 plone/openid/tests/pas.txt
 plone/openid/tests/store.txt
 plone/openid/tests/testAuthentication.py
 plone/openid/tests/testDocTests.py
 plone/openid/tests/testExtraction.py
-plone/openid/tests/testcase.py
 plone/openid/www/openid.png
 plone/openid/www/openidAdd.zpt
