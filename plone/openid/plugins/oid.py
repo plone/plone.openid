@@ -172,6 +172,7 @@ class OpenIdPlugin(BasePlugin):
         # raising an exception aborts all transactions, which means are
         # session changes are not stored. So we do a commit ourselves to
         # get things working.
+        # XXX this also f**ks up ZopeTestCase
         transaction.commit()
         raise Redirect, url
 

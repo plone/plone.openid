@@ -7,6 +7,7 @@ from plone.openid.tests.consumer import PatchPlugin
 PatchPlugin(OpenIdPlugin)
 
 class OpenIdTestCase(ZopeTestCase.ZopeTestCase):
+
     identity = "http://plone.myopenid.com"
     server_response={
             "openid.mode"              : "id_res",
@@ -21,3 +22,4 @@ class OpenIdTestCase(ZopeTestCase.ZopeTestCase):
 
     def afterSetUp(self):
         self.app._setObject("openid", OpenIdPlugin("openid"))
+

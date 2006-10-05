@@ -2,7 +2,7 @@ import os, sys
 if __name__ == '__main__':
     execfile(os.path.join(sys.path[0], 'framework.py'))
 
-from plone.openid.tests.testcase import OpenIdTestCase
+from plone.openid.tests.oitestcase import OpenIdTestCase
 from zExceptions import Redirect
 
 
@@ -46,7 +46,7 @@ class TestOpenIdExtraction(OpenIdTestCase):
     def testSessionCookie(self):
         """Check if a session cookie is found.
         """
-        cookie=self.app.openid.signIdentify(self.identity)
+        cookie=self.app.openid.signIdentity(self.identity)
         self.app.REQUEST[self.app.openid.cookie_name]=cookie
         creds=self.app.openid.extractCredentials(self.app.REQUEST)
         self.assertEqual(creds["openid.identity"], self.identity)
@@ -66,7 +66,7 @@ class TestOpenIdExtraction(OpenIdTestCase):
         """Check if a new login identity has preference over a session cookie.
         """
         self.app.REQUEST.form["__ac_identity_url"]=self.identity
-        cookie=self.app.openid.signIdentify(self.identity)
+        cookie=self.app.openid.signIdentity(self.identity)
         self.app.REQUEST[self.app.openid.cookie_name]=cookie
         self.assertRaises(Redirect,
                 self.app.openid.extractCredentials,
