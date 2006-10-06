@@ -20,6 +20,10 @@ class OpenIdTestCase(ZopeTestCase.ZopeTestCase):
             "openid.invalidate_handle" : "invalidate_handle",
             }
 
+    _setup_fixture = False
+
     def afterSetUp(self):
+        if self.app.hasObject("openid"):
+            self.app._delObject("openid")
         self.app._setObject("openid", OpenIdPlugin("openid"))
 
