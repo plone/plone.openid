@@ -189,10 +189,10 @@ class OpenIdPlugin(BasePlugin):
         if identity is not None:
             self.initiateChallenge(identity)
             return creds
-        else:
-            self.extractOpenIdServerResponse(request, creds)
-            if not creds:
-                self.extractOpenIdCookie(request, creds)
+
+        self.extractOpenIdServerResponse(request, creds)
+        if not creds:
+            self.extractOpenIdCookie(request, creds)
 
         return creds
 
