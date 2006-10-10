@@ -48,11 +48,8 @@ class TestOpenIdExtraction(OpenIdTestCase):
         """Check if a session cookie is found.
         """
         cookie=self.app.openid.signIdentity(self.identity)
-        # This sets a cookie named __ac 
         self.app.REQUEST[self.app.openid.cookie_name]=cookie
-        # but this looks for an cookie named __ac_identity_url
         creds=self.app.openid.extractCredentials(self.app.REQUEST)
-        # so this test fails
         self.assertEqual(creds["openid.identity"], self.identity)
 
 
