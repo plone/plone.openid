@@ -94,7 +94,7 @@ class OpenIdPlugin(BasePlugin):
         cookie="%s %s" % (identity.encode("base64").strip(), signature.encode("base64").strip())
 
         response=self.REQUEST["RESPONSE"]
-        response.setCookie(self.cookie_name, cookie)
+        response.setCookie(self.cookie_name, cookie, path=self.path)
 
 
     def extractOpenIdCookie(self, request, creds):
@@ -113,7 +113,8 @@ class OpenIdPlugin(BasePlugin):
             return
 
         if signature!=self.signIdentity(identity):
-            # TODO: remove the cookie
+            response=self.REQUEST["RESPONSE"]
+            response.expireCookie(self.cookie_name, path=self.path)
             return
 
         creds.clear()
