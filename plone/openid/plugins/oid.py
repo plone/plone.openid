@@ -220,6 +220,15 @@ class OpenIdPlugin(BasePlugin):
         return None
 
 
-classImplements(OpenIdPlugin, IOpenIdExtractionPlugin, IAuthenticationPlugin)
+    # ICredentialsResetPlugin implementation
+    def resetCredentials(self, request, response):
+        source=self.getSource()
+        source.invalidateSession()
+
+        response=self.REQUEST["RESPONSE"]
+        response.expireCookie(self.cookie_name, path=self.path)
+
+classImplements(OpenIdPlugin, IOpenIdExtractionPlugin, IAuthenticationPlugin,
+                ICredentialsResetPlugin)
 
 
