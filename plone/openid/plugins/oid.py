@@ -145,18 +145,18 @@ class OpenIdPlugin(SessionPlugin):
         if creds:
             return creds
 
-        return SessionPlugin.SessionPlugin(self, request)
+        return SessionPlugin(self, request)
 
 
     # IAuthenticationPlugin implementation
     def authenticateCredentials(self, credentials):
-        if not credentials.has_key("openid.source"):
-            return None
-
-        auth=SessionPlugin.SessionPlugin.authenticateCredentials(
+        auth=SessionPlugin.authenticateCredentials(
                 self, credentials)
         if auth is not None:
             return auth
+
+        if not credentials.has_key("openid.source"):
+            return None
 
         if credentials["openid.source"]=="server":
             consumer=self.getConsumer()
@@ -177,7 +177,7 @@ class OpenIdPlugin(SessionPlugin):
         source=self.getSource()
         source.invalidateSession()
 
-        SessionPlugin.SessionPlugin.resetCredentials(self, request, response)
+        SessionPlugin.resetCredentials(self, request, response)
 
 
 classImplements(OpenIdPlugin, IOpenIdExtractionPlugin, IAuthenticationPlugin,
