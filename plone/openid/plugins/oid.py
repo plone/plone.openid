@@ -1,11 +1,10 @@
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from Products.PluggableAuthService.utils import classImplements
-from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
+from plone.session.plugins.session import SessionPlugin
 from Products.PluggableAuthService.interfaces.plugins \
-                import IAuthenticationPlugin
+                import IAuthenticationPlugin, ICredentialsResetPlugin
 from plone.openid.interfaces import IOpenIdExtractionPlugin
-from plone.openid.util import GenerateSecret
 from plone.openid.store import ZopeStore
 from zExceptions import Redirect
 import transaction
@@ -31,7 +30,7 @@ def addOpenIdPlugin(self, id, title='', path='/', REQUEST=None):
                 self.absolute_url())
 
 
-class OpenIdPlugin(BasePlugin):
+class OpenIdPlugin(SessionPlugin):
     """OpenID authentication plugin.
     """
 
@@ -65,61 +64,12 @@ class OpenIdPlugin(BasePlugin):
         self.title=title
         self.path=path
         self.trust_root=trust_root
-        self.secret=GenerateSecret()
         self.store=ZopeStore()
 
 
     def getConsumer(self):
         session=self.REQUEST["SESSION"]
         return Consumer(session, self.store)
-
-
-    def signIdentity(self, identity):
-        """Sign an identity url.
-
-        The signature is signed using the authorization key. This can
-        be used to verify an identity url.
-        """
-        return cryptutil.hmacSha1(self.store.getAuthKey(), identity)
-
-
-    def setSessionCookie(self, response):
-        """Set the session cookie.
-
-        The session cookie contains the identity url along with a signature.
-        """
-        identity=response.identity_url
-        signature=self.signIdentity(identity)
-
-        cookie="%s %s" % (identity.encode("base64").strip(), signature.encode("base64").strip())
-
-        response=self.REQUEST["RESPONSE"]
-        response.setCookie(self.cookie_name, cookie, path=self.path)
-
-
-    def extractOpenIdCookie(self, request, creds):
-        """Process the OpenID cookies.
-        """
-        if not self.cookie_name in request:
-            return
-
-        cookie=request.get(self.cookie_name)
-
-        try:
-            (identity,signature)=cookie.split()
-            identity=identity.decode("base64")
-            signature=signature.decode("base64")
-        except (ValueError, binascii.Error):
-            return
-
-        if signature!=self.signIdentity(identity):
-            response=self.REQUEST["RESPONSE"]
-            response.expireCookie(self.cookie_name, path=self.path)
-            return
-
-        creds.clear()
-        creds["openid.identity"]=identity
-        creds["openid.source"]="cookie"
 
 
     def extractOpenIdServerResponse(self, request, creds):
@@ -192,10 +142,10 @@ class OpenIdPlugin(BasePlugin):
             return creds
 
         self.extractOpenIdServerResponse(request, creds)
-        if not creds:
-            self.extractOpenIdCookie(request, creds)
+        if creds:
+            return creds
 
-        return creds
+        return SessionPlugin.SessionPlugin(self, request)
 
 
     # IAuthenticationPlugin implementation
@@ -203,16 +153,18 @@ class OpenIdPlugin(BasePlugin):
         if not credentials.has_key("openid.source"):
             return None
 
-        if credentials["openid.source"]=="cookie":
-            identity=credentials["openid.identity"]
-            return (identity, identity)
-        elif credentials["openid.source"]=="server":
+        auth=SessionPlugin.SessionPlugin.authenticateCredentials(
+                self, credentials)
+        if auth is not None:
+            return auth
+
+        if credentials["openid.source"]=="server":
             consumer=self.getConsumer()
             result=consumer.complete(credentials)
             identity=credentials["openid.identity"]
 
             if result.status==SUCCESS:
-                self.setSessionCookie(result)
+                self.setupSession(identity)
                 return (identity, identity)
             else:
                 logger.info("OpenId Authentication for %s failed: %s", identity, result.message)
@@ -225,8 +177,8 @@ class OpenIdPlugin(BasePlugin):
         source=self.getSource()
         source.invalidateSession()
 
-        response=self.REQUEST["RESPONSE"]
-        response.expireCookie(self.cookie_name, path=self.path)
+        SessionPlugin.SessionPlugin.resetCredentials(self, request, response)
+
 
 classImplements(OpenIdPlugin, IOpenIdExtractionPlugin, IAuthenticationPlugin,
                 ICredentialsResetPlugin)
