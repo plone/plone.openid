@@ -46,12 +46,6 @@ class OpenIdPlugin(SessionPlugin):
                 "mode"  : "w",
             },
             {
-                "id"    : "trust_root",
-                "label" : "Trust root",
-                "type"  : "string",
-                "mode"  : "w",
-            },
-            {
                 "id"    : "cookie_name",
                 "label" : "Cookie Name root",
                 "type"  : "string",
@@ -59,12 +53,17 @@ class OpenIdPlugin(SessionPlugin):
             },
             )
 
-    def __init__(self,  id, title=None, path="/", trust_root=""):
+    def __init__(self,  id, title=None, path="/"):
         self._setId(id)
         self.title=title
         self.path=path
-        self.trust_root=trust_root
         self.store=ZopeStore()
+
+
+    def getTrustRoot(self):
+        pas=self._getPAS()
+        site=pas.aq_parent
+        return site.absolute_url()
 
 
     def getConsumer(self):
@@ -113,9 +112,11 @@ class OpenIdPlugin(SessionPlugin):
             pass
 
         if return_to is None:
-            return_to=self.REQUEST.form.get("came_from", self.REQUEST.getURL())
+            return_to=self.REQUEST.form.get("came_from", None)
+        if not return_to:
+            return_to=self.getTrustRoot()
 
-        url=result.redirectURL(self.trust_root, return_to)
+        url=result.redirectURL(self.getTrustRoot(), return_to)
 
         # There is evilness here: we can not use a normal RESPONSE.redirect
         # since further processing of the request will happily overwrite
