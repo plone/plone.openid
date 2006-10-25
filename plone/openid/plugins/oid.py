@@ -3,7 +3,8 @@ from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from Products.PluggableAuthService.utils import classImplements
 from plone.session.plugins.session import SessionPlugin
 from Products.PluggableAuthService.interfaces.plugins \
-                import IAuthenticationPlugin, ICredentialsResetPlugin
+                import IAuthenticationPlugin, ICredentialsResetPlugin, \
+                    IUserEnumerationPlugin
 from plone.openid.interfaces import IOpenIdExtractionPlugin
 from plone.openid.store import ZopeStore
 from zExceptions import Redirect
@@ -162,8 +163,29 @@ class OpenIdPlugin(SessionPlugin):
 
         SessionPlugin.resetCredentials(self, request, response)
 
+    # IUserEnumerationPlugin implementation
+    def enumerateUsers(self, id=None, login=None, exact_match=False,
+            sort_by=None, max_results=None, **kw):
+        """Slightly evil enumerator.
+
+        This is needed to be able to get PAS to return a user which it should
+        be able to handle but who can not be enumerated.
+
+        We do this by checking for the exact kind of call the PAS getUserById
+        implementation uses
+        """
+        if id is None or login is not None or not exact_match or kw:
+            return None
+
+        return [ {
+                    "id" : id,
+                    "login" : id,
+                    "pluginid" : self.getId(),
+                } ]
+
+
 
 classImplements(OpenIdPlugin, IOpenIdExtractionPlugin, IAuthenticationPlugin,
-                ICredentialsResetPlugin)
+                ICredentialsResetPlugin, IUserEnumerationPlugin)
 
 
