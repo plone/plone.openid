@@ -36,27 +36,9 @@ class OpenIdPlugin(SessionPlugin):
 
     meta_type = "OpenID plugin"
     security = ClassSecurityInfo()
-    cookie_name = "__ac"
 
-    _properties = (
-            {
-                "id"    : "title",
-                "label" : "Title",
-                "type"  : "string",
-                "mode"  : "w",
-            },
-            {
-                "id"    : "cookie_name",
-                "label" : "Cookie Name root",
-                "type"  : "string",
-                "mode"  : "w",
-            },
-            )
-
-    def __init__(self,  id, title=None, path="/"):
-        self._setId(id)
-        self.title=title
-        self.path=path
+    def __init__(self, id, title=None, path="/"):
+        SessionPlugin.__init__(self, id, title=title, path=path)
         self.store=ZopeStore()
 
 
@@ -146,7 +128,7 @@ class OpenIdPlugin(SessionPlugin):
         if creds:
             return creds
 
-        return SessionPlugin(self, request)
+        return SessionPlugin.extractCredentials(self, request)
 
 
     # IAuthenticationPlugin implementation
