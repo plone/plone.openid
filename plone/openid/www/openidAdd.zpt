@@ -1,4 +1,5 @@
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:tal="http://xml.zope.org/namespaces/tal">
   <body>
     <h1 tal:replace="structure here/manage_page_header">Header</h1>
 
@@ -14,15 +15,15 @@
       <table>
         <tr>
           <td class="form-label">Id</td>
-          <td><input type="text" name="id"></td>
+          <td><input type="text" name="id"/></td>
         </tr>
         <tr>
           <td class="form-label">Title</td>
-          <td><input type="text" name="title"></td>
+          <td><input type="text" name="title"/></td>
         </tr>
         <tr>
           <td class="form-label">Trust root</td>
-          <td><input type="text" name="trust_root"></td>
+          <td><input type="text" name="trust_root"/></td>
         </tr>
         <tr>
           <td colspan="2">
@@ -31,8 +32,8 @@
             </div>
           </td>
         </tr>
-
-
+      </table>
+    </form>
   </body>
 </html>
 
