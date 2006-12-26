@@ -28,7 +28,7 @@ class OpenIdTestCase(PloneSessionTestCase):
     def afterSetUp(self):
         PloneSessionTestCase.afterSetUp(self)
 
-        if self.app.hasObject("openid"):
-            self.app._delObject("openid")
-        self.app._setObject("openid", OpenIdPlugin("openid"))
+        if self.app.folder.hasObject("openid"):
+            self.app.folder._delObject("openid")
 
+        self.app.folder._setObject("openid", OpenIdPlugin("openid"))

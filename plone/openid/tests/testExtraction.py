@@ -11,7 +11,7 @@ class TestOpenIdExtraction(OpenIdTestCase):
     def testEmptyExtraction(self):
         """Test if we do not invent credentials out of thin air.
         """
-        creds=self.app.openid.extractCredentials(self.app.REQUEST)
+        creds=self.app.folder.openid.extractCredentials(self.app.REQUEST)
         self.assertEqual(creds, {})
 
 
@@ -21,7 +21,7 @@ class TestOpenIdExtraction(OpenIdTestCase):
         """
         self.app.REQUEST.form["__ac_identity_url"]=self.identity
         self.assertRaises(Redirect,
-                self.app.openid.extractCredentials,
+                self.app.folder.openid.extractCredentials,
                 self.app.REQUEST)
 
 
@@ -29,7 +29,7 @@ class TestOpenIdExtraction(OpenIdTestCase):
         """Test if a positive authentication is extracted.
         """
         self.app.REQUEST.form.update(self.server_response)
-        creds=self.app.openid.extractCredentials(self.app.REQUEST)
+        creds=self.app.folder.openid.extractCredentials(self.app.REQUEST)
         self.assertEqual(creds["openid.identity"], self.identity)
         self.assertEqual(creds["openid.mode"], "id_res")
         self.assertEqual(creds["openid.return_to"], "return_to")
@@ -40,17 +40,19 @@ class TestOpenIdExtraction(OpenIdTestCase):
         """
         self.app.REQUEST.form.update(self.server_response)
         self.app.REQUEST.form["openid.mode"]="cancel"
-        creds=self.app.openid.extractCredentials(self.app.REQUEST)
+        creds=self.app.folder.openid.extractCredentials(self.app.REQUEST)
         self.assertEqual(creds, {})
 
 
     def testSessionCookie(self):
         """Check if a session cookie is found.
         """
-        self.app.openid.setupSession(self.identity)
-	cookie=self.app.REQUEST["RESPONSE"][self.app.openid.cookie_name]
-        self.app.REQUEST[self.app.openid.cookie_name]=cookie
-        creds=self.app.openid.extractCredentials(self.app.REQUEST)
+        self.app.folder.openid.setupSession(self.identity)
+        cookie=self.app.REQUEST["RESPONSE"].cookies[self.app.folder.openid.cookie_name]['value']
+        self.app.REQUEST[self.app.folder.openid.cookie_name]=cookie
+        creds=self.app.folder.openid.extractCredentials(self.app.REQUEST)
+        # XXX creds is a dict that contains a 'cookie' key whose value is some
+        # strange string which has 'http://plone.myopenid.com' at the end...
         self.assertEqual(creds["openid.identity"], self.identity)
 
 
@@ -61,18 +63,18 @@ class TestOpenIdExtraction(OpenIdTestCase):
         self.app.REQUEST.form.update(self.server_response)
         self.app.REQUEST.form["__ac_identity_url"]=self.identity
         self.assertRaises(Redirect,
-                self.app.openid.extractCredentials,
+                self.app.folder.openid.extractCredentials,
                 self.app.REQUEST)
 
     def testFormCookiePriorities(self):
         """Check if a new login identity has preference over a session cookie.
         """
-        self.app.openid.setupSession(self.identity)
-        cookie=self.app.REQUEST["RESPONSE"][self.app.openid.cookie_name]
-        self.app.REQUEST[self.app.openid.cookie_name]=cookie
+        self.app.folder.openid.setupSession(self.identity)
+        cookie=self.app.REQUEST["RESPONSE"].cookies[self.app.folder.openid.cookie_name]['value']
+        self.app.REQUEST[self.app.folder.openid.cookie_name]=cookie
         self.app.REQUEST.form["__ac_identity_url"]=self.identity
         self.assertRaises(Redirect,
-                self.app.openid.extractCredentials,
+                self.app.folder.openid.extractCredentials,
                 self.app.REQUEST)
 
 

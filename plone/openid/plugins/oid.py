@@ -1,3 +1,4 @@
+from Acquisition import aq_parent
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from Products.PluggableAuthService.utils import classImplements
@@ -45,7 +46,7 @@ class OpenIdPlugin(SessionPlugin):
 
     def getTrustRoot(self):
         pas=self._getPAS()
-        site=pas.aq_parent
+        site=aq_parent(pas)
         return site.absolute_url()
 
 

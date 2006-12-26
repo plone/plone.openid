@@ -7,6 +7,7 @@ from zExceptions import Redirect
 
 
 class TestOpenIdAuthentication(OpenIdTestCase):
+
     def buildServerResponse(self):
         credentials={}
         for field in [ "nonce", "openid.assoc_handle", "openid.return_to",
@@ -22,14 +23,14 @@ class TestOpenIdAuthentication(OpenIdTestCase):
     def testEmptyAuthentication(self):
         """Test if we do not invent an identity out of thin air.
         """
-        creds=self.app.openid.authenticateCredentials({})
+        creds=self.app.folder.openid.authenticateCredentials({})
         self.assertEqual(creds, None)
 
 
     def testUnknownOpenIdSource(self):
         """Test if an incorrect source does not produce unexpected exceptions.
         """
-        creds=self.app.openid.authenticateCredentials({"openid.source" : "x"})
+        creds=self.app.folder.openid.authenticateCredentials({"openid.source" : "x"})
         self.assertEqual(creds, None)
 
 
@@ -40,7 +41,10 @@ class TestOpenIdAuthentication(OpenIdTestCase):
                 "openid.source"   : "cookie",
                 "openid.identity" : self.identity,
                 }
-        creds=self.app.openid.authenticateCredentials(credentials)
+        creds=self.app.folder.openid.authenticateCredentials(credentials)
+        # XXX This currently gives None as authenticateCredentials only handles
+        # the case where 'openid.source' is 'server' and the same method on the
+        # SessionPlugin only handles the 'source' == 'plone.session' case.
         self.assertEqual(creds, (self.identity, self.identity))
 
 
@@ -48,7 +52,7 @@ class TestOpenIdAuthentication(OpenIdTestCase):
         """Test authentication of OpenID server responses.
         """
         credentials=self.buildServerResponse()
-        creds=self.app.openid.authenticateCredentials(credentials)
+        creds=self.app.folder.openid.authenticateCredentials(credentials)
         self.assertEqual(creds, (self.identity, self.identity))
 
 
@@ -57,7 +61,7 @@ class TestOpenIdAuthentication(OpenIdTestCase):
         """
         credentials=self.buildServerResponse()
         del credentials["openid.sig"]
-        creds=self.app.openid.authenticateCredentials(credentials)
+        creds=self.app.folder.openid.authenticateCredentials(credentials)
         self.assertEqual(creds, None)
 
 
