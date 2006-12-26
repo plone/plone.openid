@@ -68,7 +68,7 @@ class TestOpenIdExtraction(OpenIdTestCase):
         """Check if a new login identity has preference over a session cookie.
         """
         self.app.openid.setupSession(self.identity)
-	cookie=self.app.REQUEST["RESPONSE"][self.app.openid.cookie_name]
+        cookie=self.app.REQUEST["RESPONSE"][self.app.openid.cookie_name]
         self.app.REQUEST[self.app.openid.cookie_name]=cookie
         self.app.REQUEST.form["__ac_identity_url"]=self.identity
         self.assertRaises(Redirect,

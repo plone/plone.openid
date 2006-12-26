@@ -9,7 +9,7 @@ from plone.openid.tests.consumer import PatchPlugin
 # Use a mock consumer for the OpenId plugin
 PatchPlugin(OpenIdPlugin)
 
-class OpenIdTestCase(PloneSessionCase):
+class OpenIdTestCase(PloneSessionTestCase):
 
     identity = "http://plone.myopenid.com"
     server_response={
@@ -26,7 +26,7 @@ class OpenIdTestCase(PloneSessionCase):
     _setup_fixture = False
 
     def afterSetUp(self):
-        PloneSessionCase.afterSetUp(self)
+        PloneSessionTestCase.afterSetUp(self)
 
         if self.app.hasObject("openid"):
             self.app._delObject("openid")
