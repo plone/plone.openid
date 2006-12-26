@@ -47,7 +47,8 @@ class TestOpenIdExtraction(OpenIdTestCase):
     def testSessionCookie(self):
         """Check if a session cookie is found.
         """
-        cookie=self.app.openid.signIdentity(self.identity)
+        self.app.openid.setupSession(self.identity)
+	cookie=self.app.REQUEST["RESPONSE"][self.app.openid.cookie_name]
         self.app.REQUEST[self.app.openid.cookie_name]=cookie
         creds=self.app.openid.extractCredentials(self.app.REQUEST)
         self.assertEqual(creds["openid.identity"], self.identity)
@@ -66,9 +67,10 @@ class TestOpenIdExtraction(OpenIdTestCase):
     def testFormCookiePriorities(self):
         """Check if a new login identity has preference over a session cookie.
         """
-        self.app.REQUEST.form["__ac_identity_url"]=self.identity
-        cookie=self.app.openid.signIdentity(self.identity)
+        self.app.openid.setupSession(self.identity)
+	cookie=self.app.REQUEST["RESPONSE"][self.app.openid.cookie_name]
         self.app.REQUEST[self.app.openid.cookie_name]=cookie
+        self.app.REQUEST.form["__ac_identity_url"]=self.identity
         self.assertRaises(Redirect,
                 self.app.openid.extractCredentials,
                 self.app.REQUEST)
