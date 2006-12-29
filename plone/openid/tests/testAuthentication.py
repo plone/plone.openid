@@ -34,20 +34,6 @@ class TestOpenIdAuthentication(OpenIdTestCase):
         self.assertEqual(creds, None)
 
 
-    def testCookieAuthentication(self):
-        """Test if an extracted cookie gives us an authenticated user.
-        """
-        credentials={
-                "openid.source"   : "cookie",
-                "openid.identity" : self.identity,
-                }
-        creds=self.app.folder.openid.authenticateCredentials(credentials)
-        # XXX This currently gives None as authenticateCredentials only handles
-        # the case where 'openid.source' is 'server' and the same method on the
-        # SessionPlugin only handles the 'source' == 'plone.session' case.
-        self.assertEqual(creds, (self.identity, self.identity))
-
-
     def testServerAuthentication(self):
         """Test authentication of OpenID server responses.
         """

@@ -50,10 +50,10 @@ class TestOpenIdExtraction(OpenIdTestCase):
         self.app.folder.openid.setupSession(self.identity)
         cookie=self.app.REQUEST["RESPONSE"].cookies[self.app.folder.openid.cookie_name]['value']
         self.app.REQUEST[self.app.folder.openid.cookie_name]=cookie
+
         creds=self.app.folder.openid.extractCredentials(self.app.REQUEST)
-        # XXX creds is a dict that contains a 'cookie' key whose value is some
-        # strange string which has 'http://plone.myopenid.com' at the end...
-        self.assertEqual(creds["openid.identity"], self.identity)
+	identity=self.app.folder.openid.authenticateCredentials(creds)
+        self.assertEqual(identity[0], self.identity)
 
 
     def testFormRedirectPriorities(self):
