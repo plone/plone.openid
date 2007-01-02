@@ -76,7 +76,7 @@ class OpenIdPlugin(SessionPlugin):
                 if request.form.has_key(field):
                     creds[field]=request.form[field]
         elif mode=="cancel":
-            # cancel is as a negative assertion in the OpenID protocol,
+            # cancel is a negative assertion in the OpenID protocol,
             # which means the user did not authorize correctly.
             pass
 
@@ -152,7 +152,8 @@ class OpenIdPlugin(SessionPlugin):
                 self.setupSession(identity)
                 return (identity, identity)
             else:
-                logger.info("OpenId Authentication for %s failed: %s", identity, result.message)
+                logger.info("OpenId Authentication for %s failed: %s",
+                                identity, result.message)
 
         return None
 
@@ -176,6 +177,9 @@ class OpenIdPlugin(SessionPlugin):
         implementation uses
         """
         if id is None or login is not None or not exact_match or kw:
+            return None
+
+        if not id.startswith("http:"):
             return None
 
         return [ {
