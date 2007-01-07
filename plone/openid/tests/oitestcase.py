@@ -5,11 +5,14 @@ from Testing.ZopeTestCase.placeless import zcml
 
 from plone.openid.plugins.oid import OpenIdPlugin
 from plone.openid.tests.consumer import PatchPlugin
+from plone.openid.tests.layer import PloneOpenId
 
 # Use a mock consumer for the OpenId plugin
 PatchPlugin(OpenIdPlugin)
 
 class OpenIdTestCase(PloneSessionTestCase):
+
+    layer = PloneOpenId
 
     identity = "http://plone.myopenid.com"
     server_response={
@@ -32,3 +35,6 @@ class OpenIdTestCase(PloneSessionTestCase):
             self.app.folder._delObject("openid")
 
         self.app.folder._setObject("openid", OpenIdPlugin("openid"))
+
+class FunctionalOpenIdTestCase(ZopeTestCase.Functional, OpenIdTestCase):
+    pass

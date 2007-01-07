@@ -1,7 +1,3 @@
-import os, sys
-if __name__ == '__main__':
-    execfile(os.path.join(sys.path[0], 'framework.py'))
-
 from plone.openid.tests.oitestcase import OpenIdTestCase
 from zExceptions import Redirect
 
@@ -56,8 +52,3 @@ def test_suite():
     suite=TestSuite()
     suite.addTest(makeSuite(TestOpenIdAuthentication))
     return suite
-
-
-if __name__ == '__main__':
-    framework()
-
