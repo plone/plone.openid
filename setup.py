@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.1'
+version = '0.9'
 
 setup(name='plone.openid',
       version=version,
@@ -25,6 +25,7 @@ setup(name='plone.openid',
       namespace_packages=['plone'],
       include_package_data=True,
       zip_safe=False,
+      download_url='http://code.google.com/p/plone/downloads/list',
       install_requires=[
         'setuptools',
         'python-openid >= 1.1.1',
