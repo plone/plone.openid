@@ -1,13 +1,5 @@
-from Products.PloneTestCase import five
+from Products.PloneTestCase.layer import PloneSite
 
-class PloneOpenId:
+class PloneOpenId(PloneSite):
 
-    def setUp(cls):
-        '''Sets up the site(s).'''
-        five.safe_load_site()
-    setUp = classmethod(setUp)
-
-    def tearDown(cls):
-        '''Removes the site(s).'''
-        five.cleanUp()
-    tearDown = classmethod(tearDown)
+    pass
