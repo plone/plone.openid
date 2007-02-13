@@ -1,5 +1,5 @@
-from Products.PloneTestCase.layer import PloneSite
+from Products.PloneTestCase.layer import ZCML
 
-class PloneOpenId(PloneSite):
+class PloneOpenId(ZCML):
 
     pass
