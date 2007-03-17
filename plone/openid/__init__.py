@@ -9,7 +9,7 @@ if HAS_OPENID:
 else:
     import logging
     logger=logging.getLogger("Plone")
-    logger.info("OpenID system packages not found, OpenID support not enabled")
+    logger.info("OpenID system packages not installed, OpenID support not available")
 
 
 def initialize(context):
