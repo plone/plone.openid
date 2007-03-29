@@ -29,7 +29,7 @@ setup(name='plone.openid',
       download_url='http://code.google.com/p/plone/downloads/list',
       install_requires=[
         'setuptools',
-        'python-openid >= 1.2.0',
+        'python-openid >=1.2.0,<1.3.0',
       ],
       entry_points="""
       # -*- Entry points: -*-
