@@ -1,8 +1,8 @@
-from plone.openid.tests.oitestcase import OpenIdTestCase
+from plone.openid.tests.oitestcase import FunctionalOpenIdTestCase
 from zExceptions import Redirect
 
 
-class TestOpenIdExtraction(OpenIdTestCase):
+class TestOpenIdExtraction(FunctionalOpenIdTestCase):
 
     def testEmptyExtraction(self):
         """Test if we do not invent credentials out of thin air.

@@ -1,8 +1,8 @@
-from plone.openid.tests.oitestcase import OpenIdTestCase
+from plone.openid.tests.oitestcase import FunctionalOpenIdTestCase
 from zExceptions import Redirect
 
 
-class TestOpenIdAuthentication(OpenIdTestCase):
+class TestOpenIdAuthentication(FunctionalOpenIdTestCase):
 
     def buildServerResponse(self):
         credentials={}

@@ -26,10 +26,9 @@ class OpenIdTestCase(PloneSessionTestCase):
             "openid.invalidate_handle" : "invalidate_handle",
             }
 
-    _setup_fixture = False
-
     def afterSetUp(self):
         PloneSessionTestCase.afterSetUp(self)
+        self.app.folder = self.folder
 
         if self.app.folder.hasObject("openid"):
             self.app.folder._delObject("openid")
