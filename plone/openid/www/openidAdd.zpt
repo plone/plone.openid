@@ -22,8 +22,8 @@
           <td><input type="text" name="title"/></td>
         </tr>
         <tr>
-          <td class="form-label">Trust root</td>
-          <td><input type="text" name="trust_root"/></td>
+          <td class="form-label">Cookie path</td>
+          <td><input type="text" value="/" name="path"/></td>
         </tr>
         <tr>
           <td colspan="2">
