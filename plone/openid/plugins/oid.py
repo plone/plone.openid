@@ -140,6 +140,8 @@ class OpenIdPlugin(BasePlugin):
             identity=credentials["openid.identity"]
 
             if result.status==SUCCESS:
+                self._getPAS().updateCredentials(self.REQUEST,
+                        self.REQUEST.RESPONSE, identity, "")
                 return (identity, identity)
             else:
                 logger.info("OpenId Authentication for %s failed: %s",
@@ -157,17 +159,22 @@ class OpenIdPlugin(BasePlugin):
         be able to handle but who can not be enumerated.
 
         We do this by checking for the exact kind of call the PAS getUserById
-        implementation uses
+        implementation makes
         """
-        if id is None or login is not None or not exact_match or kw:
+        if id and login and id!=login:
             return None
 
-        if not id.startswith("http:"):
+        if (id and not exact_match) or kw:
+            return None
+
+        key=id and id or login
+
+        if not key.startswith("http:"):
             return None
 
         return [ {
-                    "id" : id,
-                    "login" : id,
+                    "id" : key,
+                    "login" : key,
                     "pluginid" : self.getId(),
                 } ]
 
