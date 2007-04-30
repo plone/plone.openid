@@ -1,6 +1,6 @@
 try:
-    import openid.yadis
+    import openid.yadis import etxrd
     HAS_OPENID=True
-except ImportError:
+except:
     HAS_OPENID=False
 

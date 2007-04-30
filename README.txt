@@ -23,6 +23,8 @@ this content::
 
   <include package="plone.openid" />
 
+This plugin needs an active plone.session plugin to manage the login
+sessions for authenticated users.
 
 Other stuff
 -----------
