@@ -1,29 +1,27 @@
 from Acquisition import aq_parent
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
+from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.utils import classImplements
-from plone.session.plugins.session import SessionPlugin
 from Products.PluggableAuthService.interfaces.plugins \
-                import IAuthenticationPlugin, ICredentialsResetPlugin, \
-                    IUserEnumerationPlugin
+                import IAuthenticationPlugin, IUserEnumerationPlugin
 from plone.openid.interfaces import IOpenIdExtractionPlugin
 from plone.openid.store import ZopeStore
 from zExceptions import Redirect
 import transaction
-from urljr.fetchers import HTTPFetchingError
-from openid import cryptutil
+from openid.yadis.discover import DiscoveryFailure
 from openid.consumer.consumer import Consumer, SUCCESS
-import binascii, logging
+import logging
 
 manage_addOpenIdPlugin = PageTemplateFile("../www/openidAdd", globals(), 
                 __name__="manage_addOpenIdPlugin")
 
 logger = logging.getLogger("PluggableAuthService")
 
-def addOpenIdPlugin(self, id, title='', path='/', REQUEST=None):
+def addOpenIdPlugin(self, id, title='', REQUEST=None):
     """Add a OpenID plugin to a Pluggable Authentication Service.
     """
-    p=OpenIdPlugin(id, title, path)
+    p=OpenIdPlugin(id, title)
     self._setObject(p.getId(), p)
 
     if REQUEST is not None:
@@ -32,15 +30,16 @@ def addOpenIdPlugin(self, id, title='', path='/', REQUEST=None):
                 self.absolute_url())
 
 
-class OpenIdPlugin(SessionPlugin):
+class OpenIdPlugin(BasePlugin):
     """OpenID authentication plugin.
     """
 
     meta_type = "OpenID plugin"
     security = ClassSecurityInfo()
 
-    def __init__(self, id, title=None, path="/"):
-        SessionPlugin.__init__(self, id, title=title, path=path)
+    def __init__(self, id, title=None):
+        self._setId(id)
+        self.title=title
         self.store=ZopeStore()
 
 
@@ -86,9 +85,9 @@ class OpenIdPlugin(SessionPlugin):
         consumer=self.getConsumer()
         try:
             result=consumer.begin(identity_url)
-        except HTTPFetchingError, e:
-            logger.info("openid consumer error for identity %s: %s",
-                    identity_url, e.why)
+        except DiscoveryFailure, e:
+            logger.info("openid consumer discovery error for identity %s: %s",
+                    identity_url, e[0])
             return
         except KeyError, e:
             logger.info("openid consumer error for identity %s: %s",
@@ -127,19 +126,11 @@ class OpenIdPlugin(SessionPlugin):
             return creds
 
         self.extractOpenIdServerResponse(request, creds)
-        if creds:
-            return creds
-
-        return SessionPlugin.extractCredentials(self, request)
+        return creds
 
 
     # IAuthenticationPlugin implementation
     def authenticateCredentials(self, credentials):
-        auth=SessionPlugin.authenticateCredentials(
-                self, credentials)
-        if auth is not None:
-            return auth
-
         if not credentials.has_key("openid.source"):
             return None
 
@@ -149,7 +140,6 @@ class OpenIdPlugin(SessionPlugin):
             identity=credentials["openid.identity"]
 
             if result.status==SUCCESS:
-                self.setupSession(identity)
                 return (identity, identity)
             else:
                 logger.info("OpenId Authentication for %s failed: %s",
@@ -157,13 +147,6 @@ class OpenIdPlugin(SessionPlugin):
 
         return None
 
-
-    # ICredentialsResetPlugin implementation
-    def resetCredentials(self, request, response):
-        source=self.getSource()
-        source.invalidateSession()
-
-        SessionPlugin.resetCredentials(self, request, response)
 
     # IUserEnumerationPlugin implementation
     def enumerateUsers(self, id=None, login=None, exact_match=False,
@@ -191,6 +174,6 @@ class OpenIdPlugin(SessionPlugin):
 
 
 classImplements(OpenIdPlugin, IOpenIdExtractionPlugin, IAuthenticationPlugin,
-                ICredentialsResetPlugin, IUserEnumerationPlugin)
+                IUserEnumerationPlugin)
 
 

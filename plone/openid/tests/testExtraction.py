@@ -40,34 +40,11 @@ class TestOpenIdExtraction(FunctionalOpenIdTestCase):
         self.assertEqual(creds, {})
 
 
-    def testSessionCookie(self):
-        """Check if a session cookie is found.
-        """
-        self.app.folder.openid.setupSession(self.identity)
-        cookie=self.app.REQUEST["RESPONSE"].cookies[self.app.folder.openid.cookie_name]['value']
-        self.app.REQUEST[self.app.folder.openid.cookie_name]=cookie
-
-        creds=self.app.folder.openid.extractCredentials(self.app.REQUEST)
-	identity=self.app.folder.openid.authenticateCredentials(creds)
-        self.assertEqual(identity[0], self.identity)
-
-
     def testFormRedirectPriorities(self):
         """Check if a new login identity has preference over openid server
         reponse.
         """
         self.app.REQUEST.form.update(self.server_response)
-        self.app.REQUEST.form["__ac_identity_url"]=self.identity
-        self.assertRaises(Redirect,
-                self.app.folder.openid.extractCredentials,
-                self.app.REQUEST)
-
-    def testFormCookiePriorities(self):
-        """Check if a new login identity has preference over a session cookie.
-        """
-        self.app.folder.openid.setupSession(self.identity)
-        cookie=self.app.REQUEST["RESPONSE"].cookies[self.app.folder.openid.cookie_name]['value']
-        self.app.REQUEST[self.app.folder.openid.cookie_name]=cookie
         self.app.REQUEST.form["__ac_identity_url"]=self.identity
         self.assertRaises(Redirect,
                 self.app.folder.openid.extractCredentials,

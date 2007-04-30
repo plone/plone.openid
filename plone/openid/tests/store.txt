@@ -11,11 +11,6 @@ Next we create a store object:
 
   >>> store = ZopeStore()
 
-The zope store is a smart storage implementation:
-
-  >>> store.isDumb()
-  False
-
 
 Associations
 ============
@@ -62,47 +57,32 @@ automatically remove them:
   >>> a = Association(handle="handle", secret="secret", issued=now-10,
   ...                 lifetime=5, assoc_type="HMAC-SHA1")
   >>> store.storeAssociation("http://localhost", a)
-  >>> store.getAssociation("http://localhost", "handle") is not None
+  >>> store.getExpired()
+  ['http://localhost']
+
+  >>> store.getAssociation("http://localhost", "handle") is None
   True
-  >>> store.getAssociation("http://localhost", "handle") is not None
-  False
+  >>> store.getExpired()
+  []
 
 Nonces
 ======
 
 OpenId uses nonces, which are basically ids used to track outstanding
-requests. A nonce is a strin.
+requests. A nonce is build up from a server URL and a salt. In order
+to be able to track old nonces which may be expired a timestamp is
+added to their registration as well.
 
-Storing nonces is simple, and a nonce can be stored multiple times:
+Using nonces the first time results in a True response
 
-  >>> store.storeNonce("one")
-  >>> store.storeNonce("two")
-  >>> store.storeNonce("two")
-
-Using a nonce means checking if a nonce is in the store and removing it
-if so:
-
-  >>> store.useNonce("one")
+  >>> store.useNonce("one", now, "salt")
   True
-  >>> store.useNonce("one")
-  False
-
-Even if a nonce is stored twice using it will completely remove it:
-
-  >>> store.useNonce("two")
+  >>> store.useNonce("two", now, "salt")
   True
-  >>> store.useNonce("two")
+
+
+If we try to add a nonce which already exists False should be returned:
+
+  >>> store.useNonce("two", now, "salt")
   False
-
-
-Authentication keys
-===================
-Each store gets a unique authentication key:
-
-  >>> isinstance(store.getAuthKey(), str)
-  True
-  >>> other = ZopeStore()
-  >>> other.getAuthKey() == store.getAuthKey()
-  False
-
 

@@ -27,9 +27,12 @@ setup(name='plone.openid',
       include_package_data=True,
       zip_safe=False,
       download_url='http://code.google.com/p/plone/downloads/list',
+      dependency_links = [
+          'http://www.openidenabled.com/resources/downloads/python-openid/',
+      ],
       install_requires=[
         'setuptools',
-        'python-openid >=1.2.0,<1.3.0',
+        'python-openid >=2.0.0-rc2,<2.1',
       ],
       entry_points="""
       # -*- Entry points: -*-

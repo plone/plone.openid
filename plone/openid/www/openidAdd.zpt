@@ -22,10 +22,6 @@
           <td><input type="text" name="title"/></td>
         </tr>
         <tr>
-          <td class="form-label">Cookie path</td>
-          <td><input type="text" value="/" name="path"/></td>
-        </tr>
-        <tr>
           <td colspan="2">
             <div class="form-element">
               <input type="submit" value="add OpenId plugin"/>
