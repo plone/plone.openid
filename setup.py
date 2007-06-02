@@ -26,7 +26,7 @@ setup(name='plone.openid',
       namespace_packages=['plone'],
       include_package_data=True,
       zip_safe=False,
-      download_url='http://code.google.com/p/plone/downloads/list',
+#      download_url='http://code.google.com/p/plone/downloads/list',
 #      dependency_links = [
 #          'http://www.openidenabled.com/resources/downloads/python-openid/',
 #      ],
