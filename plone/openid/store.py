@@ -93,6 +93,21 @@ class ZopeStore(OpenIDStore):
         return True
 
 
+    def cleanupNonces(self):
+        if not hasattr(self, "noncetimeline"):
+            return 0
+
+        cutoff=time.time()+86400 # This is a wild guess...
+        count=0
+        for (timestamp,nonce) in self.noncetimeline:
+            if timestamp<cutoff:
+                self.noncetimeline.remove((timestamp,nonce))
+                self.nonces.remove(nonce)
+                count+=1
+
+        return count
+
+
     def cleanupAssociations(self):
         if not hasattr(self, "assoctimeline"):
             return 0
