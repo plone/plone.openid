@@ -45,7 +45,7 @@ class ZopeStore(OpenIDStore):
             # BBB for versions < 1.0b2
             self.assoctimeline=PersistentList()
 
-        self.assoctimeline.append((association.issued+association.lifetime, server_url))
+        self.assoctimeline.append((association.issued+association.lifetime, key))
 
 
     def getAssociation(self, server_url, handle=None, remove=True):
@@ -72,7 +72,7 @@ class ZopeStore(OpenIDStore):
             lst.remove(key)
             self.handles[server_url]=lst
 
-            self.assoctimeline.remove((assoc.issued+assoc.lifetime, server_url))
+            self.assoctimeline.remove((assoc.issued+assoc.lifetime, key))
             return True
         except KeyError:
             return False
@@ -101,6 +101,6 @@ class ZopeStore(OpenIDStore):
 
         now=time.time()
 
-        return [server_url for (timestamp, server_url) in self.assoctimeline
+        return [key[0] for (timestamp, key) in self.assoctimeline
                 if timestamp<=now]
 
