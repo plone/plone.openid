@@ -94,6 +94,8 @@ class ZopeStore(OpenIDStore):
 
 
     def getExpired(self):
+        # As of openid 2.0.0 this method is no longer part of the interface,
+        # but we keep it around since it is useful to test our implementation.
         if not hasattr(self, "assoctimeline"):
             return []
 
