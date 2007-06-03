@@ -30,10 +30,10 @@ class OpenIdTestCase(PloneSessionTestCase):
         PloneSessionTestCase.afterSetUp(self)
         self.app.folder = self.folder
 
-        if self.app.folder.hasObject("openid"):
-            self.app.folder._delObject("openid")
+        if self.folder.pas.hasObject("openid"):
+            self.app.folder.pas._delObject("openid")
 
-        self.app.folder._setObject("openid", OpenIdPlugin("openid"))
+        self.app.folder.pas._setObject("openid", OpenIdPlugin("openid"))
 
 class FunctionalOpenIdTestCase(ZopeTestCase.Functional, OpenIdTestCase):
     pass

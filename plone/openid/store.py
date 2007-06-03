@@ -93,14 +93,18 @@ class ZopeStore(OpenIDStore):
         return True
 
 
-    def getExpired(self):
-        # As of openid 2.0.0 this method is no longer part of the interface,
-        # but we keep it around since it is useful to test our implementation.
+    def cleanupAssociations(self):
         if not hasattr(self, "assoctimeline"):
-            return []
+            return 0
 
         now=time.time()
+        count=0
 
-        return [key[0] for (timestamp, key) in self.assoctimeline
-                if timestamp<=now]
+        expired=(key for (timestamp,key) in self.assoctimeline
+                if timestamp<=now)
+        for key in expired:
+            self.removeAssociation(*key)
+            count+=1
+
+        return count
 

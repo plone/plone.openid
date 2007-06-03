@@ -57,13 +57,13 @@ automatically remove them:
   >>> a = Association(handle="handle", secret="secret", issued=now-10,
   ...                 lifetime=5, assoc_type="HMAC-SHA1")
   >>> store.storeAssociation("http://localhost", a)
-  >>> store.getExpired()
-  ['http://localhost']
+  >>> store.cleanupAssociations()
+  1
 
   >>> store.getAssociation("http://localhost", "handle") is None
   True
-  >>> store.getExpired()
-  []
+  >>> store.cleanupAssociations()
+  0
 
 Nonces
 ======

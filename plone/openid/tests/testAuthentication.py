@@ -19,14 +19,14 @@ class TestOpenIdAuthentication(FunctionalOpenIdTestCase):
     def testEmptyAuthentication(self):
         """Test if we do not invent an identity out of thin air.
         """
-        creds=self.app.folder.openid.authenticateCredentials({})
+        creds=self.folder.pas.openid.authenticateCredentials({})
         self.assertEqual(creds, None)
 
 
     def testUnknownOpenIdSource(self):
         """Test if an incorrect source does not produce unexpected exceptions.
         """
-        creds=self.app.folder.openid.authenticateCredentials({"openid.source" : "x"})
+        creds=self.folder.pas.openid.authenticateCredentials({"openid.source" : "x"})
         self.assertEqual(creds, None)
 
 
@@ -34,7 +34,7 @@ class TestOpenIdAuthentication(FunctionalOpenIdTestCase):
         """Test authentication of OpenID server responses.
         """
         credentials=self.buildServerResponse()
-        creds=self.app.folder.openid.authenticateCredentials(credentials)
+        creds=self.folder.pas.openid.authenticateCredentials(credentials)
         self.assertEqual(creds, (self.identity, self.identity))
 
 
@@ -43,7 +43,7 @@ class TestOpenIdAuthentication(FunctionalOpenIdTestCase):
         """
         credentials=self.buildServerResponse()
         del credentials["openid.sig"]
-        creds=self.app.folder.openid.authenticateCredentials(credentials)
+        creds=self.folder.pas.openid.authenticateCredentials(credentials)
         self.assertEqual(creds, None)
 
 
