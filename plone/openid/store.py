@@ -1,4 +1,5 @@
 from openid.store.interface import OpenIDStore
+from openid.store.nonce import SKEW
 from openid.association import Association
 from persistent.list import PersistentList
 from BTrees.OOBTree import OOBTree
@@ -97,7 +98,7 @@ class ZopeStore(OpenIDStore):
         if not hasattr(self, "noncetimeline"):
             return 0
 
-        cutoff=time.time()+86400 # This is a wild guess...
+        cutoff=time.time()+SKEW
         count=0
         for (timestamp,nonce) in self.noncetimeline:
             if timestamp<cutoff:
