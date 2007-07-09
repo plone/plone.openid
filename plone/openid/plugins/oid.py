@@ -69,10 +69,8 @@ class OpenIdPlugin(BasePlugin):
             creds.clear()
             creds["openid.source"]="server"
             creds["nonce"]=request.form.get("nonce")
-            for field in [ "identity", "assoc_handle", "return_to",
-                    "signed", "sig", "invalidate_handle", "mode" ]:
-                field="openid."+field
-                if request.form.has_key(field):
+            for (field,value) in request.form.iteritems():
+                if field.startswith("openid."):
                     creds[field]=request.form[field]
         elif mode=="cancel":
             # cancel is a negative assertion in the OpenID protocol,
