@@ -3,9 +3,12 @@ OpenID PAS support
 
 Introduction
 ------------
-This product implements OpenID authentication support for Zope via a
+This product implements OpenID_ authentication support for Zope_ via a
 Pluggable Authentication Service plugin. For more information on OpenID see
 http://www.openidenabled.com/ .
+
+.. _Zope: http://www.zope.org/
+.. _OpenID: http://www.openidenabled.com/
 
 Installing plone.openid
 -----------------------
@@ -13,7 +16,7 @@ Installing plone.openid
 This package is made to be used as a normal python package within Zope 2. This 
 is only supported in Zope 2.10 or later. If you are using Zope 2.8 or Zope 2.9
 you can install the pythonproducts package from
-http://dev.serverzen.com/site/projects/pythonproducts to add python product
+http://dev.serverzen.com/site/projects/pythonproducts to add python package
 support to your Zope.
 
 After installing this product in your python path it needs to be registered
@@ -26,38 +29,29 @@ this content::
 This plugin needs an active plone.session plugin to manage the login
 sessions for authenticated users.
 
-Other stuff
------------
+If you are using buildout_ you can also do this by adding a zcml statement
+to your buildout::
+
+ [buildout]
+ zcml = plone.openid
+
+
+.. _buildout: http://pypi.python.org/pypi/zc.buildout
+
+
+Authentication flow
+-------------------
 The OpenID authentication flow goes like this:
 
-- user submits a ID (which is a URL) to you site
-- consumer.begin(id).redirectURL(..) returns a redirect URL
-- after auth the user is redirect back to a url in the plone site; the
-  auth response is verified there. If succesfull a cookie is set
-- the cookie is checked with the OpenID consumer
-
-Plugins:
-- credential extraction:
-  - takes the cookie and extracts the openid information from it. Should
-    use the standard Zope cookie in order to cleanly leverage CacheFu.
-    TODO: check if the cookie auth plugin will bite us here by invaliding
-    our cookie
-- authentication:
-  - takes the cookie information and verifies it
-
-- login form handling takes the url and does the redirect. Return redirect
-  to what though?
-  -> credential extraction plugin
-  -> auth plugin will set cookie if credentials authenticate
-
-- use a challenge plugin for non-Plone sites to present the login form
+- user submits a OpenID identity (which is a URL) to you site. This is
+  done through a HTTP POST using a form variable called ``__ac_identity_url``
+- the PAS plugin sees this variable during credential extraction and 
+  initiates a OpenID challenge. This results in a transaction commit and
+  a redirect to an OpenID server.
+- the OpenID server takes care of authenticating the user and redirect the
+  user back to the Zope site.
+- the OpenID PAS plugin extracts the information passed in via the OpenID
+  server redirect and uses that in its authentication code to complete the
+  OpenID authentication
 
 
-Storage
--------
-A custom storage is needed:
-- the secret should be generated once and stored on the plugin. Maybe
-  a 'reset secret' button would be useful - that will force all existing
-  cookies to be invalidated
-- storage should be in the ZODB/ZEO in order to support clustered setups
-- 

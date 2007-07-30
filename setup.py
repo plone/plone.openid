@@ -6,9 +6,7 @@ version = '1.0rc2'
 setup(name='plone.openid',
       version=version,
       description="OpenID authentication support for PAS",
-      long_description="""\
-""",
-      # Get more strings from http://www.python.org/pypi?%3Aaction=list_classifiers
+      long_description=open("README.txt").read(),
       classifiers=[
         "Framework :: Plone",
         "Framework :: Zope2",
