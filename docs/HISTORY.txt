@@ -2,8 +2,8 @@ Changelog for plone.openid
 
     (name of developer listed in brackets)
 
-plone.openid - 0.1 Unreleased
+plone.openid - 1.0  August 15, 2007
 
-    - Initial package structure.
-      [zopeskel]
+    - First stable release
+      [wichert]
 
