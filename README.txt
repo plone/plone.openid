@@ -36,9 +36,9 @@ This plugin needs an active plone.session plugin to manage the login
 sessions for authenticated users.
 
 If you are using buildout_ you can also do this by adding a zcml statement
-to your buildout::
+to the instance section of your buildout::
 
- [buildout]
+ [instance]
  zcml = plone.openid
 
 
