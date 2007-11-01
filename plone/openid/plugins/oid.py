@@ -167,7 +167,7 @@ class OpenIdPlugin(BasePlugin):
 
         key=id and id or login
 
-        if not key.startswith("http:"):
+        if not (key.startswith("http:") or key.startswith("https:")):
             return None
 
         return [ {

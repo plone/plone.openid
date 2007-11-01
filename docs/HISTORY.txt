@@ -2,6 +2,12 @@ Changelog for plone.openid
 
     (name of developer listed in brackets)
 
+plone.openid - 1.0  UNRELEASED
+
+    - Also accept httpd URLs as valid identifiers. This fixes
+      http://dev.plone.org/plone/ticket/7298
+      [wichert]
+
 plone.openid - 1.0  August 15, 2007
 
     - First stable release
