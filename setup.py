@@ -6,7 +6,7 @@ setup(name='plone.openid',
       version=version,
       description="OpenID authentication support for PAS",
       long_description=open("README.txt").read() + \
-                       open("docs/HISTORY.txt"),
+                       open("docs/HISTORY.txt").read(),
       classifiers=[
         "Framework :: Plone",
         "Framework :: Zope2",
