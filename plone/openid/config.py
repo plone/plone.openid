@@ -4,3 +4,6 @@ try:
 except:
     HAS_OPENID=False
 
+import socket
+HAS_SSL=hasattr(socket, "ssl")
+del socket

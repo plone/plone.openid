@@ -1,15 +1,25 @@
-Changelog for plone.openid
+Changelog
+=========
 
-    (name of developer listed in brackets)
 
-plone.openid - 1.0.1  November 9, 2007
+Version 1.0.1 - UNRELEASED
+--------------------------
 
-    - Also accept https URLs as valid identifiers. This fixes
-      http://dev.plone.org/plone/ticket/7298
-      [wichert]
+* Do not enable OpenID support if python has no SSL support.
+  [wichert]
 
-plone.openid - 1.0  August 15, 2007
 
-    - First stable release
-      [wichert]
+Version 1.0.1 - November 9, 2007
+--------------------------------
+
+* Also accept https URLs as valid identifiers. This fixes
+  http://dev.plone.org/plone/ticket/7298
+  [wichert]
+
+
+Version 1.0 - August 15, 2007
+-----------------------------
+
+* First stable release
+  [wichert]
 
