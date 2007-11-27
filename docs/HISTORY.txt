@@ -2,8 +2,12 @@ Changelog
 =========
 
 
-Version 1.0.1 - UNRELEASED
+Version 1.1 - UNRELEASED
 --------------------------
+
+* Writing test and fixes for bug #7176 whereby a traceback
+  was produced when an empty string identity was placed in the openid
+  login form [andrewb]
 
 * Do not enable OpenID support if python has no SSL support.
   [wichert]
