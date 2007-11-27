@@ -50,6 +50,15 @@ class TestOpenIdExtraction(FunctionalOpenIdTestCase):
                 self.folder.pas.openid.extractCredentials,
                 self.app.REQUEST)
 
+    def testEmptyStringIdentity(self):
+        """Failing test for bug #7176, where
+           an "" produces IndexError exception
+        """
+        self.app.REQUEST.form.update(self.server_response)
+        self.app.REQUEST.form["__ac_identity_url"]=""
+        creds=self.folder.pas.openid.extractCredentials(self.app.REQUEST)
+        self.assertEqual(creds, {})
+
 
 def test_suite():
     from unittest import TestSuite, makeSuite

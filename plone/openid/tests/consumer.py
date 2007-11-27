@@ -20,6 +20,15 @@ class MockConsumer:
 
     def begin(self, identity):
         self.identity=identity
+        if identity == str():
+            # if the python openid is passed an identity of an empty string
+            # an IndexError is raised in the depths of its XRI identification
+            # see: http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=xri
+            
+            # an empty string is common when the submit button of the
+            # openid login is clicked prior to providing an identity url
+            # we simulate openid's response here in our mock object
+            raise IndexError, "string index out of range"
         return MockAuthRequest()
 
     def complete(self, credentials):
