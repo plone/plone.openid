@@ -119,7 +119,7 @@ class OpenIdPlugin(BasePlugin):
         """
         creds={}
         identity=request.form.get("__ac_identity_url", None)
-        if identity is not None:
+        if identity is not None and identity != str():
             self.initiateChallenge(identity)
             return creds
 
