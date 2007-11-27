@@ -26,7 +26,7 @@ class MockConsumer:
         status=SUCCESS
         message="authentication completed succesfully"
         
-        if credentials.has_key("openid.identity") and credentials["openid.identity"] == str():
+        if credentials.has_key("openid.identity") and credentials["openid.identity"] == "":
             # if the python openid is passed an identity of an empty string
             # an IndexError is raised in the depths of its XRI identification
             # see: http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=xri
