@@ -10,6 +10,20 @@ class TestOpenIdExtraction(FunctionalOpenIdTestCase):
         creds=self.folder.pas.openid.extractCredentials(self.app.REQUEST)
         self.assertEqual(creds, {})
 
+    def testEmptyStringIdentityExtraction(self):
+        """Test coverage for bug #7176. In the case where "" (i.e an empty
+           string) is passed in as the identity via the request, 
+           we essentially want to ensure that a Redirect isn't raised, which 
+           would signify that an IOpenIdExtractionPlugin challenge was initialized.
+           
+           This test demonstrates our openid plugin's extractCredentials eliminates
+           credentials that aren't in the openid.* namespace.
+        """
+        self.app.REQUEST.form.update(self.server_response)
+        self.app.REQUEST.form["__ac_identity_url"]=""
+        creds=self.folder.pas.openid.extractCredentials(self.app.REQUEST)
+        self.failIf(creds.has_key("__ac_identity_url"))
+        
 
     def testRedirect(self):
         """Test if a redirect is generated for a login attempt.
@@ -49,15 +63,6 @@ class TestOpenIdExtraction(FunctionalOpenIdTestCase):
         self.assertRaises(Redirect,
                 self.folder.pas.openid.extractCredentials,
                 self.app.REQUEST)
-
-    def testEmptyStringIdentity(self):
-        """Failing test for bug #7176, where
-           an "" produces IndexError exception
-        """
-        self.app.REQUEST.form.update(self.server_response)
-        self.app.REQUEST.form["__ac_identity_url"]=""
-        creds=self.folder.pas.openid.extractCredentials(self.app.REQUEST)
-        self.assertEqual(creds, {})
 
 
 def test_suite():

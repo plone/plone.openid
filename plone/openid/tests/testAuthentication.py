@@ -22,6 +22,15 @@ class TestOpenIdAuthentication(FunctionalOpenIdTestCase):
         creds=self.folder.pas.openid.authenticateCredentials({})
         self.assertEqual(creds, None)
 
+    def testEmptyStringIdentityAuthentication(self):
+        """Test coverage for bug #7176, where an 
+           "" (i.e. an empty string) identity passed to 
+           authenticationCredentials should return fail authentication
+        """
+        credentials=self.buildServerResponse()
+        credentials["openid.identity"]=""
+        creds=self.folder.pas.openid.authenticateCredentials(credentials)
+        self.assertEqual(creds, None)
 
     def testUnknownOpenIdSource(self):
         """Test if an incorrect source does not produce unexpected exceptions.
