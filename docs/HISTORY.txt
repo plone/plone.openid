@@ -1,28 +1,33 @@
 Changelog
 =========
 
+1.2 - unreleased
+----------------
 
-Version 1.1 - UNRELEASED
---------------------------
+
+
+1.1 - April 21, 2008
+--------------------
 
 * Writing test and fixes for bug #7176 whereby a traceback
   was produced when an empty string identity was placed in the openid
-  login form [andrewb]
+  login form.
+  [andrewb]
 
 * Do not enable OpenID support if python has no SSL support.
   [wichert]
 
 
-Version 1.0.1 - November 9, 2007
---------------------------------
+1.0.1 - November 9, 2007
+------------------------
 
 * Also accept https URLs as valid identifiers. This fixes
   http://dev.plone.org/plone/ticket/7298
   [wichert]
 
 
-Version 1.0 - August 15, 2007
------------------------------
+1.0 - August 15, 2007
+---------------------
 
 * First stable release
   [wichert]
