@@ -4,7 +4,9 @@ Changelog
 1.2 - unreleased
 ----------------
 
-
+* Use the OpenID "claimed identifier" so that the proper identity URL is
+  displayed when using delegation.
+  [davisagli]
 
 1.1 - April 21, 2008
 --------------------

@@ -65,7 +65,7 @@ class OpenIdPlugin(BasePlugin):
         mode=request.form.get("openid.mode", None)
         if mode=="id_res":
             # id_res means 'positive assertion' in OpenID, more commonly
-            # describes as 'positive authentication'
+            # described as 'positive authentication'
             creds.clear()
             creds["openid.source"]="server"
             creds["nonce"]=request.form.get("nonce")
@@ -91,7 +91,7 @@ class OpenIdPlugin(BasePlugin):
             logger.info("openid consumer error for identity %s: %s",
                     identity_url, e.why)
             pass
-
+            
         if return_to is None:
             return_to=self.REQUEST.form.get("came_from", None)
         if not return_to:
@@ -102,7 +102,7 @@ class OpenIdPlugin(BasePlugin):
         # There is evilness here: we can not use a normal RESPONSE.redirect
         # since further processing of the request will happily overwrite
         # our redirect. So instead we raise a Redirect exception, However
-        # raising an exception aborts all transactions, which means are
+        # raising an exception aborts all transactions, which means our
         # session changes are not stored. So we do a commit ourselves to
         # get things working.
         # XXX this also f**ks up ZopeTestCase
@@ -115,7 +115,7 @@ class OpenIdPlugin(BasePlugin):
         """This method performs the PAS credential extraction.
 
         It takes either the zope cookie and extracts openid credentials
-        from it, or a redirect from a OpenID server.
+        from it, or a redirect from an OpenID server.
         """
         creds={}
         identity=request.form.get("__ac_identity_url", None)
@@ -135,7 +135,7 @@ class OpenIdPlugin(BasePlugin):
         if credentials["openid.source"]=="server":
             consumer=self.getConsumer()
             result=consumer.complete(credentials)
-            identity=credentials["openid.identity"]
+            identity=result.identity_url
 
             if result.status==SUCCESS:
                 self._getPAS().updateCredentials(self.REQUEST,
