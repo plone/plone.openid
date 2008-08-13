@@ -22,7 +22,7 @@ class MockConsumer:
         self.identity=identity
         return MockAuthRequest()
 
-    def complete(self, credentials):
+    def complete(self, credentials, current_url):
         status=SUCCESS
         message="authentication completed succesfully"
         

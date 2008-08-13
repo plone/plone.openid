@@ -4,6 +4,16 @@ Changelog
 1.2 - unreleased
 ----------------
 
+* Fixed bug where you could not log in via OpenID, immediately log out,
+  and then immediately log in again.
+  [davisagli]
+
+* Upgraded to python-openid>=2.2.1 to fix handling of OpenID providers
+  that use identifier recycling.  (c.f.
+  http://developer.yahoo.com/openid/faq.html)  This closes
+  http://dev.plone.org/plone/ticket/8051.
+  [davisagli]
+
 * Use the OpenID "claimed identifier" so that the proper identity URL is
   displayed when using delegation.
   [davisagli]

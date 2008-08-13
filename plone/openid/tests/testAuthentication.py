@@ -12,6 +12,10 @@ class TestOpenIdAuthentication(FunctionalOpenIdTestCase):
             credentials[field]=field
         credentials["openid.identity"]=self.identity
         credentials["openid.source"]="server"
+        
+        # this isn't part of the server response, but is added to the
+        # credentials by PAS
+        credentials["extractor"] = "openid"
 
         return credentials
 

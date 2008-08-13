@@ -68,9 +68,9 @@ class OpenIdPlugin(BasePlugin):
             # described as 'positive authentication'
             creds.clear()
             creds["openid.source"]="server"
-            creds["nonce"]=request.form.get("nonce")
+            creds["janrain_nonce"]=request.form.get("janrain_nonce")
             for (field,value) in request.form.iteritems():
-                if field.startswith("openid."):
+                if field.startswith("openid.") or field.startswith("openid1_"):
                     creds[field]=request.form[field]
         elif mode=="cancel":
             # cancel is a negative assertion in the OpenID protocol,
@@ -82,7 +82,7 @@ class OpenIdPlugin(BasePlugin):
     def initiateChallenge(self, identity_url, return_to=None):
         consumer=self.getConsumer()
         try:
-            result=consumer.begin(identity_url)
+            auth_request=consumer.begin(identity_url)
         except DiscoveryFailure, e:
             logger.info("openid consumer discovery error for identity %s: %s",
                     identity_url, e[0])
@@ -94,10 +94,14 @@ class OpenIdPlugin(BasePlugin):
             
         if return_to is None:
             return_to=self.REQUEST.form.get("came_from", None)
-        if not return_to:
+        if not return_to or 'janrain_nonce' in return_to:
+            # The conditional on janrain_nonce here is to handle the case where
+            # the user logs in, logs out, and logs in again in succession.  We
+            # were ending up with duplicate open ID variables on the second response
+            # from the OpenID provider, which was breaking the second login.
             return_to=self.getTrustRoot()
 
-        url=result.redirectURL(self.getTrustRoot(), return_to)
+        url=auth_request.redirectURL(self.getTrustRoot(), return_to)
 
         # There is evilness here: we can not use a normal RESPONSE.redirect
         # since further processing of the request will happily overwrite
@@ -122,7 +126,7 @@ class OpenIdPlugin(BasePlugin):
         if identity is not None and identity != "":
             self.initiateChallenge(identity)
             return creds
-
+            
         self.extractOpenIdServerResponse(request, creds)
         return creds
 
@@ -134,9 +138,15 @@ class OpenIdPlugin(BasePlugin):
 
         if credentials["openid.source"]=="server":
             consumer=self.getConsumer()
-            result=consumer.complete(credentials)
+            
+            # remove the extractor key that PAS adds to the credentials,
+            # or python-openid will complain
+            query = credentials.copy()
+            del query['extractor']
+            
+            result=consumer.complete(query, self.REQUEST.ACTUAL_URL)
             identity=result.identity_url
-
+            
             if result.status==SUCCESS:
                 self._getPAS().updateCredentials(self.REQUEST,
                         self.REQUEST.RESPONSE, identity, "")
