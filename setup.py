@@ -30,7 +30,7 @@ setup(name='plone.openid',
 #      ],
       install_requires=[
         'setuptools',
-        'python-openid >=2.2.1,',
+        'python-openid >=2.2.1,<2.3dev',
       ],
       entry_points="""
       # -*- Entry points: -*-
