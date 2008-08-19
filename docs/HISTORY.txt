@@ -1,8 +1,8 @@
 Changelog
 =========
 
-1.2 - unreleased
-----------------
+1.2 - August 19, 2008
+---------------------
 
 * Fixed bug where you could not log in via OpenID, immediately log out,
   and then immediately log in again.
