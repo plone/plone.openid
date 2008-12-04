@@ -3,8 +3,10 @@ from AccessControl.SecurityInfo import ClassSecurityInfo
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.utils import classImplements
-from Products.PluggableAuthService.interfaces.plugins \
-                import IAuthenticationPlugin, IUserEnumerationPlugin
+from Products.PluggableAuthService.interfaces.plugins import (
+                                                 IAuthenticationPlugin,
+                                                 IUserEnumerationPlugin,
+                                                 IPropertiesPlugin)
 from plone.openid.interfaces import IOpenIdExtractionPlugin
 from plone.openid.store import ZopeStore
 from zExceptions import Redirect
@@ -12,6 +14,9 @@ import transaction
 from openid.yadis.discover import DiscoveryFailure
 from openid.consumer.consumer import Consumer, SUCCESS
 import logging
+
+from openid.sreg import SRegRequest, SRegResponse
+from BTrees.OOBTree import OOBTree
 
 manage_addOpenIdPlugin = PageTemplateFile("../www/openidAdd", globals(), 
                 __name__="manage_addOpenIdPlugin")
@@ -41,6 +46,7 @@ class OpenIdPlugin(BasePlugin):
         self._setId(id)
         self.title=title
         self.store=ZopeStore()
+        self._dstore = OOBTree()
 
 
     def getTrustRoot(self):
@@ -91,6 +97,8 @@ class OpenIdPlugin(BasePlugin):
             logger.info("openid consumer error for identity %s: %s",
                     identity_url, e.why)
             pass
+        else:
+            auth_request.addExtension(SRegRequest(optional=("email","fullname")))
             
         if return_to is None:
             return_to=self.REQUEST.form.get("came_from", None)
@@ -148,6 +156,10 @@ class OpenIdPlugin(BasePlugin):
             identity=result.identity_url
             
             if result.status==SUCCESS:
+                sreg_resp = SRegResponse.fromSuccessResponse(result)
+                if not hasattr(self, "_dstore"):
+                    self._dstore = OOBTree()
+                self._dstore[identity] = dict(sreg_resp)
                 self._getPAS().updateCredentials(self.REQUEST,
                         self.REQUEST.RESPONSE, identity, "")
                 return (identity, identity)
@@ -173,7 +185,11 @@ class OpenIdPlugin(BasePlugin):
             return None
 
         if (id and not exact_match) or kw:
-            return None
+             final = []
+             for k in self._dstore.keys():
+                 if id in k:
+                     final.append({"id":k,"login":k,"pluginid":self.getId()})
+             return final
 
         key=id and id or login
 
@@ -185,10 +201,17 @@ class OpenIdPlugin(BasePlugin):
                     "login" : key,
                     "pluginid" : self.getId(),
                 } ]
-
+    
+    # IPropertiesPlugin
+    def getPropertiesForUser(self, user, request=None):
+        try:
+            return self._dstore.get(user.getId(),{})
+        except AttributeError:
+            self._dstore = OOBTree()
+            return {}
 
 
 classImplements(OpenIdPlugin, IOpenIdExtractionPlugin, IAuthenticationPlugin,
-                IUserEnumerationPlugin)
+                IUserEnumerationPlugin, IPropertiesPlugin)
 
 
