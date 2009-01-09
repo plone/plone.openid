@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.2.1 - unreleased
+------------------
+
+* Specify package dependencies.
+  [hannosch]
+
 1.2 - August 19, 2008
 ---------------------
 
