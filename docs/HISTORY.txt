@@ -4,6 +4,9 @@ Changelog
 1.2.1 - unreleased
 ------------------
 
+* Declare test dependencies in an extra.
+  [hannosch]
+
 * Specify package dependencies.
   [hannosch]
 

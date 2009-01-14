@@ -23,11 +23,15 @@ setup(name='plone.openid',
       namespace_packages=['plone'],
       include_package_data=True,
       zip_safe=False,
+      extras_require=dict(
+        test=[
+            'zope.testing',
+            'Products.PloneTestCase',
+        ]
+      ),
       install_requires=[
         'setuptools',
         'python-openid >=2.2.1,<2.3dev',
-        'zope.testing',
-        'Products.PloneTestCase',
         'Products.PluggableAuthService',
         'ZODB3',
         # 'transaction',
