@@ -1,8 +1,8 @@
 Changelog
 =========
 
-1.2.1 - unreleased
-------------------
+2.0 - unreleased
+----------------
 
 * Declare test dependencies in an extra.
   [hannosch]
