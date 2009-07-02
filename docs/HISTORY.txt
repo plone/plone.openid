@@ -10,6 +10,11 @@ Changelog
 * Specify package dependencies.
   [hannosch]
 
+* Handle the case where the handles for a given domain are empty but a
+  request for them is made anyway. This fixes
+  http://dev.plone.org/plone/ticket/9178
+  [jvloothuis]
+
 1.2 - August 19, 2008
 ---------------------
 

@@ -65,6 +65,12 @@ automatically remove them:
   >>> store.cleanupAssociations()
   0
 
+Getting an association without specifying a handle should work even
+when the current handles are empty.
+
+  >>> store.getAssociation("http://localhost") is None
+  True
+
 Nonces
 ======
 

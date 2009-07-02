@@ -53,7 +53,7 @@ class ZopeStore(OpenIDStore):
         try:
             key=self.getAssociationKey(server_url, handle)
             assoc=Association.deserialize(self.associations[key])
-        except KeyError:
+        except (KeyError, IndexError):
             return None
 
         if remove and assoc.getExpiresIn()==0:
