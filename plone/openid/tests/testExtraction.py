@@ -1,14 +1,35 @@
-from plone.openid.tests.oitestcase import FunctionalOpenIdTestCase
+import unittest
 from zExceptions import Redirect
 
 
-class TestOpenIdExtraction(FunctionalOpenIdTestCase):
+class TestOpenIdExtraction(unittest.TestCase):
+    identity = "http://plone.myopenid.com"
+    server_response={
+            "openid.mode"              : "id_res",
+            "nonce"                    : "nonce",
+            "openid.identity"          : "http://plone.myopenid.com",
+            "openid.assoc_handle"      : "assoc_handle",
+            "openid.return_to"         : "return_to",
+            "openid.signed"            : "signed",
+            "openid.sig"               : "sig",
+            "openid.invalidate_handle" : "invalidate_handle",
+            }
+
+    def createPlugin(self):
+        from plone.openid.tests.utils import MockPAS
+        from plone.openid.tests.utils import MockSite
+        from plone.openid.plugins.oid import OpenIdPlugin
+        plugin=OpenIdPlugin("openid")
+        return plugin.__of__((MockPAS()).__of__(MockSite()))
+
 
     def testEmptyExtraction(self):
         """Test if we do not invent credentials out of thin air.
         """
-        creds=self.folder.pas.openid.extractCredentials(self.app.REQUEST)
+        plugin=self.createPlugin()
+        creds=plugin.extractCredentials(plugin.REQUEST)
         self.assertEqual(creds, {})
+
 
     def testEmptyStringIdentityExtraction(self):
         """Test coverage for bug #7176. In the case where "" (i.e an empty
@@ -19,9 +40,10 @@ class TestOpenIdExtraction(FunctionalOpenIdTestCase):
            This test demonstrates our openid plugin's extractCredentials eliminates
            credentials that aren't in the openid.* namespace.
         """
-        self.app.REQUEST.form.update(self.server_response)
-        self.app.REQUEST.form["__ac_identity_url"]=""
-        creds=self.folder.pas.openid.extractCredentials(self.app.REQUEST)
+        plugin=self.createPlugin()
+        plugin.REQUEST.form.update(self.server_response)
+        plugin.REQUEST.form["__ac_identity_url"]=""
+        creds=plugin.extractCredentials(plugin.REQUEST)
         self.failIf(creds.has_key("__ac_identity_url"))
         
 
@@ -29,17 +51,19 @@ class TestOpenIdExtraction(FunctionalOpenIdTestCase):
         """Test if a redirect is generated for a login attempt.
         This test requires a working internet connection!
         """
-        self.app.REQUEST.form["__ac_identity_url"]=self.identity
+        plugin=self.createPlugin()
+        plugin.REQUEST.form["__ac_identity_url"]=self.identity
         self.assertRaises(Redirect,
-                self.folder.pas.openid.extractCredentials,
-                self.app.REQUEST)
+                plugin.extractCredentials,
+                plugin.REQUEST)
 
 
     def testPositiveOpenIdResponse(self):
         """Test if a positive authentication is extracted.
         """
-        self.app.REQUEST.form.update(self.server_response)
-        creds=self.folder.pas.openid.extractCredentials(self.app.REQUEST)
+        plugin=self.createPlugin()
+        plugin.REQUEST.form.update(self.server_response)
+        creds=plugin.extractCredentials(plugin.REQUEST)
         self.assertEqual(creds["openid.identity"], self.identity)
         self.assertEqual(creds["openid.mode"], "id_res")
         self.assertEqual(creds["openid.return_to"], "return_to")
@@ -48,9 +72,10 @@ class TestOpenIdExtraction(FunctionalOpenIdTestCase):
     def testNegativeOpenIdResponse(self):
         """Check if a cancelled authentication request is correctly ignored.
         """
-        self.app.REQUEST.form.update(self.server_response)
-        self.app.REQUEST.form["openid.mode"]="cancel"
-        creds=self.folder.pas.openid.extractCredentials(self.app.REQUEST)
+        plugin=self.createPlugin()
+        plugin.REQUEST.form.update(self.server_response)
+        plugin.REQUEST.form["openid.mode"]="cancel"
+        creds=plugin.extractCredentials(plugin.REQUEST)
         self.assertEqual(creds, {})
 
 
@@ -58,11 +83,12 @@ class TestOpenIdExtraction(FunctionalOpenIdTestCase):
         """Check if a new login identity has preference over openid server
         reponse.
         """
-        self.app.REQUEST.form.update(self.server_response)
-        self.app.REQUEST.form["__ac_identity_url"]=self.identity
+        plugin=self.createPlugin()
+        plugin.REQUEST.form.update(self.server_response)
+        plugin.REQUEST.form["__ac_identity_url"]=self.identity
         self.assertRaises(Redirect,
-                self.folder.pas.openid.extractCredentials,
-                self.app.REQUEST)
+                plugin.extractCredentials, plugin.REQUEST)
+
 
 
 def test_suite():

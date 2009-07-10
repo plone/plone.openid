@@ -1,4 +1,3 @@
-
 from openid.consumer.consumer import FAILURE, SUCCESS
 
 class MockAuthRequest:

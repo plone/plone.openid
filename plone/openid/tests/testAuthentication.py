@@ -1,8 +1,15 @@
-from plone.openid.tests.oitestcase import FunctionalOpenIdTestCase
-from zExceptions import Redirect
+import unittest
 
+class TestOpenIdAuthentication(unittest.TestCase):
+    identity = "http://plone.myopenid.com"
 
-class TestOpenIdAuthentication(FunctionalOpenIdTestCase):
+    def createPlugin(self):
+        from plone.openid.tests.utils import MockPAS
+        from plone.openid.plugins.oid import OpenIdPlugin
+        plugin=OpenIdPlugin("openid")
+        pas=MockPAS()
+        return plugin.__of__(pas)
+
 
     def buildServerResponse(self):
         credentials={}
@@ -23,8 +30,10 @@ class TestOpenIdAuthentication(FunctionalOpenIdTestCase):
     def testEmptyAuthentication(self):
         """Test if we do not invent an identity out of thin air.
         """
-        creds=self.folder.pas.openid.authenticateCredentials({})
+        plugin=self.createPlugin()
+        creds=plugin.authenticateCredentials({})
         self.assertEqual(creds, None)
+
 
     def testEmptyStringIdentityAuthentication(self):
         """Test coverage for bug #7176, where an 
@@ -33,22 +42,18 @@ class TestOpenIdAuthentication(FunctionalOpenIdTestCase):
         """
         credentials=self.buildServerResponse()
         credentials["openid.identity"]=""
-        creds=self.folder.pas.openid.authenticateCredentials(credentials)
+        plugin=self.createPlugin()
+        creds=plugin.authenticateCredentials(credentials)
         self.assertEqual(creds, None)
+
 
     def testUnknownOpenIdSource(self):
         """Test if an incorrect source does not produce unexpected exceptions.
         """
-        creds=self.folder.pas.openid.authenticateCredentials({"openid.source" : "x"})
+        plugin=self.createPlugin()
+        creds=plugin.authenticateCredentials({"openid.source" : "x"})
         self.assertEqual(creds, None)
 
-
-    def testServerAuthentication(self):
-        """Test authentication of OpenID server responses.
-        """
-        credentials=self.buildServerResponse()
-        creds=self.folder.pas.openid.authenticateCredentials(credentials)
-        self.assertEqual(creds, (self.identity, self.identity))
 
 
     def testIncompleteServerAuthentication(self):
@@ -56,7 +61,8 @@ class TestOpenIdAuthentication(FunctionalOpenIdTestCase):
         """
         credentials=self.buildServerResponse()
         del credentials["openid.sig"]
-        creds=self.folder.pas.openid.authenticateCredentials(credentials)
+        plugin=self.createPlugin()
+        creds=plugin.authenticateCredentials(credentials)
         self.assertEqual(creds, None)
 
 

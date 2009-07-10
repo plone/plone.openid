@@ -4,8 +4,9 @@ Changelog
 2.0 - unreleased
 ----------------
 
-* Declare test dependencies in an extra.
-  [hannosch]
+* Refactor tests to be simple python test cases. This removes
+  all dependencies on Plone code.
+  [wichert]
 
 * Specify package dependencies.
   [hannosch]
@@ -14,6 +15,7 @@ Changelog
   request for them is made anyway. This fixes
   http://dev.plone.org/plone/ticket/9178
   [jvloothuis]
+
 
 1.2 - August 19, 2008
 ---------------------
