@@ -4,6 +4,9 @@ Changelog
 2.0 - unreleased
 ----------------
 
+* Relicense to BSD.
+  [Plone Foundation]
+
 * Refactor tests to be simple python test cases. This removes
   all dependencies on Plone code.
   [wichert]
