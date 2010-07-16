@@ -4,6 +4,9 @@ Changelog
 2.0 - unreleased
 ----------------
 
+* Package metadata cleanup and definition of all package dependencies.
+  [hannosch]
+
 * Relicense to BSD.
   [Plone Foundation]
 
@@ -18,7 +21,6 @@ Changelog
   request for them is made anyway. This fixes
   http://dev.plone.org/plone/ticket/9178
   [jvloothuis]
-
 
 1.2 - August 19, 2008
 ---------------------
@@ -48,7 +50,6 @@ Changelog
 * Do not enable OpenID support if python has no SSL support.
   [wichert]
 
-
 1.0.1 - November 9, 2007
 ------------------------
 
@@ -56,10 +57,8 @@ Changelog
   http://dev.plone.org/plone/ticket/7298
   [wichert]
 
-
 1.0 - August 15, 2007
 ---------------------
 
 * First stable release
   [wichert]
-
