@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0 - unreleased
+2.0 - 2010-07-18
 ----------------
 
 * Package metadata cleanup and definition of all package dependencies.
@@ -22,8 +22,8 @@ Changelog
   http://dev.plone.org/plone/ticket/9178
   [jvloothuis]
 
-1.2 - August 19, 2008
----------------------
+1.2 - 2008-08-19
+----------------
 
 * Fixed bug where you could not log in via OpenID, immediately log out,
   and then immediately log in again.
@@ -39,8 +39,8 @@ Changelog
   displayed when using delegation.
   [davisagli]
 
-1.1 - April 21, 2008
---------------------
+1.1 - 2008-04-21
+----------------
 
 * Writing test and fixes for bug #7176 whereby a traceback
   was produced when an empty string identity was placed in the openid
@@ -50,15 +50,15 @@ Changelog
 * Do not enable OpenID support if python has no SSL support.
   [wichert]
 
-1.0.1 - November 9, 2007
-------------------------
+1.0.1 - 2007-11-09
+------------------
 
 * Also accept https URLs as valid identifiers. This fixes
   http://dev.plone.org/plone/ticket/7298
   [wichert]
 
-1.0 - August 15, 2007
----------------------
+1.0 - 2007-08-15
+----------------
 
 * First stable release
   [wichert]
