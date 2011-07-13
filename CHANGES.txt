@@ -2,8 +2,14 @@ Changelog
 =========
 
 
-2.0.1 - unreleased
+2.1 - unreleased
 ------------------
+
+- Added support for the Simple Registration OpenID extension:
+  http://openid.net/specs/openid-simple-registration-extension-1_0.html
+  Not enabled by default; must be enabled manually on the plugin
+  (use_simple_registration).
+  [davidblewett]
 
 - Add MANIFEST.in.
   [WouterVH]

@@ -92,3 +92,16 @@ If we try to add a nonce which already exists False should be returned:
   >>> store.useNonce("two", now, "salt")
   False
 
+Registrations
+=============
+
+The OpenID Simple Registration Extension allows the consumer to request
+a set of pre-determined fields for the server to return. We ask for all
+the possible fields and store the return mapping.
+
+  >>> identity = "http://localhost/someuser"
+  >>> registration = {'fullname': 'Some User', 'email': 'some@user.com'}
+  >>> store.storeSimpleRegistration(identity, registration)
+  >>> store.getSimpleRegistration(identity) == registration
+  True
+

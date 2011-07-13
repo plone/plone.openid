@@ -1,19 +1,25 @@
+import logging
+
 from Acquisition import aq_parent
 from AccessControl.SecurityInfo import ClassSecurityInfo
+import transaction
+from zExceptions import Redirect
+from zope.event import notify
+
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.utils import classImplements
-from Products.PluggableAuthService.interfaces.plugins \
-                import IAuthenticationPlugin, IUserEnumerationPlugin
+from Products.PluggableAuthService.interfaces.plugins import \
+    (IAuthenticationPlugin, IPropertiesPlugin, IUserEnumerationPlugin)
 from plone.openid.interfaces import IOpenIdExtractionPlugin
+from plone.openid.events import OpenIDRegistrationReceivedEvent
 from plone.openid.store import ZopeStore
-from zExceptions import Redirect
-import transaction
+
 from openid.yadis.discover import DiscoveryFailure
 from openid.consumer.consumer import Consumer, SUCCESS
-import logging
+from openid.extensions.sreg import SRegRequest, data_fields
 
-manage_addOpenIdPlugin = PageTemplateFile("../www/openidAdd", globals(), 
+manage_addOpenIdPlugin = PageTemplateFile("../www/openidAdd", globals(),
                 __name__="manage_addOpenIdPlugin")
 
 logger = logging.getLogger("PluggableAuthService")
@@ -36,6 +42,12 @@ class OpenIdPlugin(BasePlugin):
 
     meta_type = "OpenID plugin"
     security = ClassSecurityInfo()
+
+    use_simple_registration = False
+
+    _properties = (
+        dict(id='use_simple_registration', type='boolean', mode='w',
+             label='Use "Simple Registration" to retrieve user profile info'),)
 
     def __init__(self, id, title=None):
         self._setId(id)
@@ -91,7 +103,7 @@ class OpenIdPlugin(BasePlugin):
             logger.info("openid consumer error for identity %s: %s",
                     identity_url, e.why)
             pass
-            
+
         if return_to is None:
             return_to=self.REQUEST.form.get("came_from", None)
         if not return_to or 'janrain_nonce' in return_to:
@@ -100,6 +112,10 @@ class OpenIdPlugin(BasePlugin):
             # were ending up with duplicate open ID variables on the second response
             # from the OpenID provider, which was breaking the second login.
             return_to=self.getTrustRoot()
+
+        # Add a request for more user info if enabled
+        if self.use_simple_registration:
+            auth_request.addExtension(SRegRequest(optional=data_fields.keys()))
 
         url=auth_request.redirectURL(self.getTrustRoot(), return_to)
 
@@ -126,7 +142,7 @@ class OpenIdPlugin(BasePlugin):
         if identity is not None and identity != "":
             self.initiateChallenge(identity)
             return creds
-            
+
         self.extractOpenIdServerResponse(request, creds)
         return creds
 
@@ -138,18 +154,36 @@ class OpenIdPlugin(BasePlugin):
 
         if credentials["openid.source"]=="server":
             consumer=self.getConsumer()
-            
+
             # remove the extractor key that PAS adds to the credentials,
             # or python-openid will complain
             query = credentials.copy()
             del query['extractor']
-            
+
             result=consumer.complete(query, self.REQUEST.ACTUAL_URL)
             identity=result.identity_url
-            
+
             if result.status==SUCCESS:
-                self._getPAS().updateCredentials(self.REQUEST,
-                        self.REQUEST.RESPONSE, identity, "")
+                pas = self._getPAS()
+                if self.use_simple_registration:
+                    sreg_uri = result.message.namespaces.getNamespaceURI('sreg')
+                    registration = result.extensionResponse(sreg_uri, True)
+                    logger.info("Storing registration info for identity %s: %s",
+                                identity, registration)
+                    self.store.storeSimpleRegistration(identity, registration)
+                    # The following is because the redirect to the OpenID
+                    # server breaks the default PythonScript success traversal
+                    # behavior.
+                    # NOTE: we don't emit the raw registration, as
+                    #       storeSimpleRegistration converts the raw response
+                    #       to a PersistentMap
+                    persistent_reg = self.store.getSimpleRegistration(identity)
+                    user = pas.getUserById(identity)
+                    notify(OpenIDRegistrationReceivedEvent(user, persistent_reg))
+
+                pas.updateCredentials(self.REQUEST,
+                                      self.REQUEST.RESPONSE,
+                                      identity, "")
                 return (identity, identity)
             else:
                 logger.info("OpenId Authentication for %s failed: %s",
@@ -173,7 +207,13 @@ class OpenIdPlugin(BasePlugin):
             return None
 
         if (id and not exact_match) or kw:
-            return None
+            return (
+                {'id': identity,
+                 'login': identity,
+                 'pluginid': self.getId()}
+                for identity in self.store.getAllRegistrations().iterkeys()
+                if id.lower() in identity.lower()
+            )
 
         key=id and id or login
 
@@ -186,9 +226,16 @@ class OpenIdPlugin(BasePlugin):
                     "pluginid" : self.getId(),
                 } ]
 
+    # IPropertiesPlugin implementation
+    def getPropertiesForUser(self, user, request=None):
+        user_id = user.getId()
+        if not self.use_simple_registration or \
+           not (user_id.startswith("http:") or user_id.startswith("https:")):
+            return {}
+        else:
+            registration = self.store.getSimpleRegistration(user_id, {})
+            return registration
 
 
 classImplements(OpenIdPlugin, IOpenIdExtractionPlugin, IAuthenticationPlugin,
-                IUserEnumerationPlugin)
-
-
+                IPropertiesPlugin, IUserEnumerationPlugin)

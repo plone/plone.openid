@@ -1,16 +1,39 @@
 from openid.consumer.consumer import FAILURE, SUCCESS
+from openid.message import SREG_URI
+
+
+class MockNamespaceMap:
+    def getNamespaceURI(self, alias):
+        return SREG_URI
+
+class MockMessage:
+    """ Amock OpenID Message.
+    """
+    def __init__(self, message=None):
+        self.msg = message
+        self.namespaces = MockNamespaceMap()
+
+    def __str__(self):
+        return str(self.msg)
 
 class MockAuthRequest:
-    """Amock OpenID AuthRequest.
+    """A mock OpenID AuthRequest.
     """
-    def __init__(self, status=None, identity_url=None, message=None):
+    def __init__(self, status=None, credentials=None, message=None):
         self.status=status
-        self.identity_url=identity_url
-        self.message=message
+        if credentials is None or 'openid.identity' not in credentials:
+            self.identity_url = None
+        else:
+            self.identity_url = credentials['openid.identity']
+        self.message = MockMessage(message)
+        self._creds = credentials
 
 
     def redirectURL(self, trust_root, return_to):
         return return_to
+
+    def extensionResponse(self, namespace_uri, require_signed):
+        return self._creds
 
 
 class MockConsumer:
@@ -24,7 +47,7 @@ class MockConsumer:
     def complete(self, credentials, current_url):
         status=SUCCESS
         message="authentication completed succesfully"
-        
+
         if credentials.has_key("openid.identity") and credentials["openid.identity"] == "":
             # if the python openid is passed an identity of an empty string
             # an IndexError is raised in the depths of its XRI identification
@@ -42,11 +65,11 @@ class MockConsumer:
                 if field not in credentials:
                     message="field missing"
                     status=FAILURE
-                
+
 
         return MockAuthRequest(status=status,
                                 message=message,
-                                identity_url=credentials["openid.identity"])
+                                credentials=credentials)
 
 def PatchPlugin(plugin):
     def getConsumer(self):

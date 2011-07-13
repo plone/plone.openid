@@ -2,6 +2,7 @@ from openid.store.interface import OpenIDStore
 from openid.store.nonce import SKEW
 from openid.association import Association
 from persistent.list import PersistentList
+from persistent.mapping import PersistentMapping
 from BTrees.OOBTree import OOBTree
 from BTrees.OIBTree import OITreeSet
 import time
@@ -15,6 +16,7 @@ class ZopeStore(OpenIDStore):
         self.associations=OOBTree()
         self.handles=OOBTree()
         self.nonces=OITreeSet()
+        self.identity_registrations = OOBTree()
 
         self.noncetimeline=PersistentList()
         self.assoctimeline=PersistentList()
@@ -124,3 +126,28 @@ class ZopeStore(OpenIDStore):
 
         return count
 
+    def storeSimpleRegistration(self, identity, registration):
+        """ Helper method to store the results of a Simple Registration
+        request from an OpenID server.
+            identity is the identity_url returned by the server
+            registration is the dictionary returned by the extensionResponse
+        """
+        if not hasattr(self, "identity_registrations"):
+            # BBB for store instances from before 2.1
+            self.identity_registrations = OOBTree()
+
+        self.identity_registrations[identity] = PersistentMapping(registration)
+
+    def getSimpleRegistration(self, identity=None, default=None):
+        if not hasattr(self, "identity_registrations"):
+            # BBB for store instances from before 2.1
+            self.identity_registrations = OOBTree()
+
+        return self.identity_registrations.get(identity, default)
+
+    def getAllRegistrations(self):
+        if not hasattr(self, "identity_registrations"):
+            # BBB for store instances from before 2.1
+            self.identity_registrations = OOBTree()
+
+        return self.identity_registrations

@@ -1,3 +1,6 @@
+from zope.interface import Attribute
+
+from Products.PluggableAuthService.interfaces.events import IPASEvent
 from Products.PluggableAuthService.interfaces.plugins import IExtractionPlugin
 
 class IOpenIdExtractionPlugin(IExtractionPlugin):
@@ -19,3 +22,8 @@ class IOpenIdExtractionPlugin(IExtractionPlugin):
                         }
         """
 
+class IOpenIDRegistrationReceivedEvent(IPASEvent):
+    """A user successfully authenticated against an OpenID server.
+    """
+    simple_registration = Attribute("The profile information returned from a "
+                                    "Simple Registration request.")
