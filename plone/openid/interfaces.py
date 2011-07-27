@@ -25,5 +25,5 @@ class IOpenIdExtractionPlugin(IExtractionPlugin):
 class IOpenIDRegistrationReceivedEvent(IPASEvent):
     """A user successfully authenticated against an OpenID server.
     """
-    simple_registration = Attribute("The profile information returned from a "
-                                    "Simple Registration request.")
+    simple_registration = Attribute(
+        "The profile information returned from a Simple Registration request.")
