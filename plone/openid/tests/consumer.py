@@ -7,7 +7,7 @@ class MockNamespaceMap:
         return SREG_URI
 
 class MockMessage:
-    """ Amock OpenID Message.
+    """ A mock OpenID Message.
     """
     def __init__(self, message=None):
         self.msg = message
