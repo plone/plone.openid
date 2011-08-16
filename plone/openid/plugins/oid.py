@@ -204,7 +204,7 @@ class OpenIdPlugin(BasePlugin):
         implementation makes
         """
         if id and login and id!=login:
-            return None
+            return []
 
         if (id and not exact_match) or kw:
             return (
@@ -215,10 +215,18 @@ class OpenIdPlugin(BasePlugin):
                 if id.lower() in identity.lower()
             )
 
+        if id is None and login is None:
+            return (
+                {'id': identity,
+                 'login': identity,
+                 'pluginid': self.getId()}
+                for identity in self.store.getAllRegistrations().iterkeys()
+            )
+
         key=id and id or login
 
         if not (key.startswith("http:") or key.startswith("https:")):
-            return None
+            return []
 
         return [ {
                     "id" : key,
