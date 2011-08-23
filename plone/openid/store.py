@@ -1,11 +1,14 @@
-from openid.store.interface import OpenIDStore
-from openid.store.nonce import SKEW
-from openid.association import Association
+import time
+from urllib import quote_plus
+
 from persistent.list import PersistentList
 from persistent.mapping import PersistentMapping
 from BTrees.OOBTree import OOBTree
 from BTrees.OIBTree import OITreeSet
-import time
+
+from openid.store.interface import OpenIDStore
+from openid.store.nonce import SKEW
+from openid.association import Association
 
 class ZopeStore(OpenIDStore):
     """Zope OpenID store.
@@ -43,10 +46,6 @@ class ZopeStore(OpenIDStore):
         lst.append(key)
         lst.sort(key=getKey)
         self.handles[server_url]=lst
-
-        if not hasattr(self, "assoctimeline"):
-            # BBB for versions < 1.0b2
-            self.assoctimeline=PersistentList()
 
         self.assoctimeline.append((association.issued+association.lifetime, key))
 
@@ -88,9 +87,6 @@ class ZopeStore(OpenIDStore):
 
         self.nonces.insert(nonce)
 
-        if not hasattr(self, "noncetimeline"):
-            # BBB for store instances from before 1.0b2
-            self.noncetimeline=PersistentList()
         self.noncetimeline.append((timestamp, nonce))
 
         return True
@@ -132,22 +128,19 @@ class ZopeStore(OpenIDStore):
             identity is the identity_url returned by the server
             registration is the dictionary returned by the extensionResponse
         """
-        if not hasattr(self, "identity_registrations"):
-            # BBB for store instances from before 2.1
-            self.identity_registrations = OOBTree()
-
-        self.identity_registrations[identity] = PersistentMapping(registration)
+        # Ensure we're properly quoting URLs
+        encoded_id = identity
+        if (encoded_id.startswith("http:") or encoded_id.startswith("https:")):
+            encoded_id = quote_plus(encoded_id)
+        self.identity_registrations[encoded_id] = \
+                PersistentMapping(registration)
 
     def getSimpleRegistration(self, identity=None, default=None):
-        if not hasattr(self, "identity_registrations"):
-            # BBB for store instances from before 2.1
-            self.identity_registrations = OOBTree()
-
-        return self.identity_registrations.get(identity, default)
+        # Ensure we're properly quoting URLs
+        encoded_id = identity
+        if (encoded_id.startswith("http:") or encoded_id.startswith("https:")):
+            encoded_id = quote_plus(encoded_id)
+        return self.identity_registrations.get(encoded_id, default)
 
     def getAllRegistrations(self):
-        if not hasattr(self, "identity_registrations"):
-            # BBB for store instances from before 2.1
-            self.identity_registrations = OOBTree()
-
         return self.identity_registrations

@@ -5,6 +5,13 @@ Changelog
 2.1 - unreleased
 ------------------
 
+- Various BBB bits moved to an upgrade step.
+  [davidblewett]
+
+- Updated plugin to always encode the returned OpenID identity URL,
+  to avoid traversal issues with embedded / characters.
+  [davidblewett]
+
 - Added support for the Simple Registration OpenID extension:
   http://openid.net/specs/openid-simple-registration-extension-1_0.html
   Not enabled by default; must be enabled manually on the plugin

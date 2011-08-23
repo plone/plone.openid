@@ -1,9 +1,49 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
-    xmlns:five="http://namespaces.zope.org/five">
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:cmf="http://namespaces.zope.org/cmf"
+    xmlns:five="http://namespaces.zope.org/five"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
+    i18n_domain="plone">
 
   <five:registerPackage package="." initialize=".initialize" />
 
+  <genericsetup:importStep
+      name="ploneopenid-various"
+      title="Set up OpenID authentication in Plone"
+      handler="plone.openid.setuphandlers.importVarious"
+      description="" />
+
+  <genericsetup:registerProfile
+      zcml:condition="installed openid.yadis"
+      name="default"
+      title="plone.openid (default)"
+      description="Adds support for authenticating with OpenID credentials"
+      directory="profiles/default"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
   <include package="plone.session" />
+
+  <genericsetup:upgradeStep
+        source="*"
+        destination="001"
+        profile="plone.openid:default"
+        title="Add needed attributes"
+        description=""
+        sortkey="1"
+        handler="plone.openid.upgrades.update_bbb_attributes"
+        />
+
+  <genericsetup:upgradeStep
+        source="001"
+        destination="002"
+        profile="plone.openid:default"
+        title="Update non-urlencoded usernames"
+        description=""
+        sortkey="1"
+        handler="plone.openid.upgrades.urlencode_usernames"
+        />
 
 </configure>

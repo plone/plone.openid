@@ -1,4 +1,5 @@
 import logging
+from urllib import quote_plus
 
 from Acquisition import aq_parent
 from AccessControl.SecurityInfo import ClassSecurityInfo
@@ -161,7 +162,9 @@ class OpenIdPlugin(BasePlugin):
             del query['extractor']
 
             result=consumer.complete(query, self.REQUEST.ACTUAL_URL)
-            identity=result.identity_url
+            # We quote the returned URL to avoid traversal errors with
+            # embedded / characters
+            identity = quote_plus(result.identity_url)
 
             if result.status==SUCCESS:
                 pas = self._getPAS()
@@ -225,7 +228,10 @@ class OpenIdPlugin(BasePlugin):
 
         key=id and id or login
 
-        if not (key.startswith("http:") or key.startswith("https:")):
+        if not (key.startswith("http:") or \
+                key.startswith("https:") or \
+                key.startswith("http%3A") or \
+                key.startswith("https%3A")):
             return []
 
         return [ {
@@ -238,7 +244,10 @@ class OpenIdPlugin(BasePlugin):
     def getPropertiesForUser(self, user, request=None):
         user_id = user.getId()
         if not self.use_simple_registration or \
-           not (user_id.startswith("http:") or user_id.startswith("https:")):
+           not (user_id.startswith("http:") or \
+                user_id.startswith("https:") or \
+                user_id.startswith("http%3A") or \
+                user_id.startswith("https%3A")):
             return {}
         else:
             registration = self.store.getSimpleRegistration(user_id, {})

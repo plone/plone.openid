@@ -27,4 +27,3 @@ def initialize(context):
                                         oid.addOpenIdPlugin),
                                 visibility=None,
                                 icon="www/openid.png")
-
