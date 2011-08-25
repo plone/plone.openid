@@ -210,21 +210,21 @@ class OpenIdPlugin(BasePlugin):
             return []
 
         if (id and not exact_match) or kw:
-            return (
+            return [
                 {'id': identity,
                  'login': identity,
                  'pluginid': self.getId()}
                 for identity in self.store.getAllRegistrations().iterkeys()
                 if id.lower() in identity.lower()
-            )
+            ]
 
         if id is None and login is None:
-            return (
+            return [
                 {'id': identity,
                  'login': identity,
                  'pluginid': self.getId()}
                 for identity in self.store.getAllRegistrations().iterkeys()
-            )
+            ]
 
         key=id and id or login
 
