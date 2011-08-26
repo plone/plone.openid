@@ -1,9 +1,7 @@
-from urllib import quote_plus
-
 from BTrees.OOBTree import OOBTree
 from persistent.list import PersistentList
 
-from plone.openid.util import getTool, getPASPlugin
+from plone.openid.util import getTool, getPASPlugin, encodeIdentityURL
 
 
 def update_bbb_attributes(context):
@@ -26,8 +24,6 @@ def urlencode_usernames(context):
     identity URL, to avoid traversal issues when Plone encounters a /
     in the URL.
     """
-    acl = getTool(context, 'acl_users')
-    openid = getPASPlugin(context)
     openid_name, openid = getPASPlugin(context)
     if openid_name is None:
         return
@@ -36,10 +32,12 @@ def urlencode_usernames(context):
     to_update = [
         identity
         for identity in all_registrations
-        if identity.startswith("http:") or identity.startswith("https:")
+        if identity.startswith("http:") or identity.startswith("https:") or \
+            identity.startswith("http%3A") or identity.startswith("https%3A")
     ]
     for identity in to_update:
-        # Fix values in our store
-        encoded_id = quote_plus(identity)
+        # We encode the returned URL to avoid traversal errors with
+        # embedded / characters
+        encoded_id = encodeIdentityURL(identity)
         all_registrations[encoded_id] = all_registrations[identity]
         del all_registrations[identity]

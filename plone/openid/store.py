@@ -1,5 +1,4 @@
 import time
-from urllib import quote_plus
 
 from persistent.list import PersistentList
 from persistent.mapping import PersistentMapping
@@ -9,6 +8,8 @@ from BTrees.OIBTree import OITreeSet
 from openid.store.interface import OpenIDStore
 from openid.store.nonce import SKEW
 from openid.association import Association
+
+from plone.openid.util import encodeIdentityURL
 
 class ZopeStore(OpenIDStore):
     """Zope OpenID store.
@@ -131,7 +132,7 @@ class ZopeStore(OpenIDStore):
         # Ensure we're properly quoting URLs
         encoded_id = identity
         if (encoded_id.startswith("http:") or encoded_id.startswith("https:")):
-            encoded_id = quote_plus(encoded_id)
+            encoded_id = encodeIdentityURL(encoded_id)
         self.identity_registrations[encoded_id] = \
                 PersistentMapping(registration)
 
@@ -139,8 +140,11 @@ class ZopeStore(OpenIDStore):
         # Ensure we're properly quoting URLs
         encoded_id = identity
         if (encoded_id.startswith("http:") or encoded_id.startswith("https:")):
-            encoded_id = quote_plus(encoded_id)
+            encoded_id = encodeIdentityURL(encoded_id)
         return self.identity_registrations.get(encoded_id, default)
 
     def getAllRegistrations(self):
         return self.identity_registrations
+
+    def removeSimpleRegistration(self, identity):
+        return self.identity_registrations.pop(identity, None)

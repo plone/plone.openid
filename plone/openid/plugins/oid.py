@@ -1,5 +1,4 @@
 import logging
-from urllib import quote_plus
 
 from Acquisition import aq_parent
 from AccessControl.SecurityInfo import ClassSecurityInfo
@@ -15,6 +14,7 @@ from Products.PluggableAuthService.interfaces.plugins import \
 from plone.openid.interfaces import IOpenIdExtractionPlugin
 from plone.openid.events import OpenIDRegistrationReceivedEvent
 from plone.openid.store import ZopeStore
+from plone.openid.util import encodeIdentityURL
 
 from openid.yadis.discover import DiscoveryFailure
 from openid.consumer.consumer import Consumer, SUCCESS
@@ -162,9 +162,9 @@ class OpenIdPlugin(BasePlugin):
             del query['extractor']
 
             result=consumer.complete(query, self.REQUEST.ACTUAL_URL)
-            # We quote the returned URL to avoid traversal errors with
+            # We encode the returned URL to avoid traversal errors with
             # embedded / characters
-            identity = quote_plus(result.identity_url)
+            identity = encodeIdentityURL(result.identity_url)
 
             if result.status==SUCCESS:
                 pas = self._getPAS()
@@ -218,6 +218,15 @@ class OpenIdPlugin(BasePlugin):
                 if id.lower() in identity.lower()
             ]
 
+        if id and exact_match:
+            return [
+                {'id': identity,
+                 'login': identity,
+                 'pluginid': self.getId()}
+                for identity in self.store.getAllRegistrations().iterkeys()
+                if id == identity
+            ]
+
         if id is None and login is None:
             return [
                 {'id': identity,
@@ -230,8 +239,7 @@ class OpenIdPlugin(BasePlugin):
 
         if not (key.startswith("http:") or \
                 key.startswith("https:") or \
-                key.startswith("http%3A") or \
-                key.startswith("https%3A")):
+                key.startswith("openid_")):
             return []
 
         return [ {
@@ -239,6 +247,7 @@ class OpenIdPlugin(BasePlugin):
                     "login" : key,
                     "pluginid" : self.getId(),
                 } ]
+
 
     # IPropertiesPlugin implementation
     def getPropertiesForUser(self, user, request=None):
@@ -252,6 +261,12 @@ class OpenIdPlugin(BasePlugin):
         else:
             registration = self.store.getSimpleRegistration(user_id, {})
             return registration
+
+    # IMutablePropertiesPlugin implementation
+    # NOTE: we don't formally implement this, as it would mean
+    #       pulling in Products.PlonePAS
+    def deleteUser(self, user_id):
+        self.store.removeSimpleRegistration(user_id)
 
 
 classImplements(OpenIdPlugin, IOpenIdExtractionPlugin, IAuthenticationPlugin,

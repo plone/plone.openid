@@ -9,12 +9,6 @@
 
   <five:registerPackage package="." initialize=".initialize" />
 
-  <genericsetup:importStep
-      name="ploneopenid-various"
-      title="Set up OpenID authentication in Plone"
-      handler="plone.openid.setuphandlers.importVarious"
-      description="" />
-
   <genericsetup:registerProfile
       zcml:condition="installed openid.yadis"
       name="default"
@@ -24,10 +18,15 @@
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
 
+  <genericsetup:importStep
+      name="ploneopenid-various"
+      title="Set up OpenID authentication in Plone"
+      handler="plone.openid.setuphandlers.importVarious"
+      description="" />
+
   <include package="plone.session" />
 
   <genericsetup:upgradeStep
-        source="*"
         destination="001"
         profile="plone.openid:default"
         title="Add needed attributes"
@@ -37,12 +36,11 @@
         />
 
   <genericsetup:upgradeStep
-        source="001"
-        destination="002"
+        destination="001"
         profile="plone.openid:default"
         title="Update non-urlencoded usernames"
         description=""
-        sortkey="1"
+        sortkey="2"
         handler="plone.openid.upgrades.urlencode_usernames"
         />
 
