@@ -180,9 +180,12 @@ class OpenIdPlugin(BasePlugin):
                     # NOTE: we don't emit the raw registration, as
                     #       storeSimpleRegistration converts the raw response
                     #       to a PersistentMap
-                    persistent_reg = self.store.getSimpleRegistration(identity)
+                    persistent_reg = \
+                        self.store.storeSimpleRegistration(identity,
+                                                           registration)
                     user = pas.getUserById(identity)
-                    notify(OpenIDRegistrationReceivedEvent(user, persistent_reg))
+                    notify(OpenIDRegistrationReceivedEvent(user,
+                                                           persistent_reg))
 
                 pas.updateCredentials(self.REQUEST,
                                       self.REQUEST.RESPONSE,
@@ -209,7 +212,7 @@ class OpenIdPlugin(BasePlugin):
         if id and login and id!=login:
             return []
 
-        if (id and not exact_match) or kw:
+        if id and not exact_match:
             return [
                 {'id': identity,
                  'login': identity,

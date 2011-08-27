@@ -135,13 +135,10 @@ class ZopeStore(OpenIDStore):
             encoded_id = encodeIdentityURL(encoded_id)
         self.identity_registrations[encoded_id] = \
                 PersistentMapping(registration)
+        return self.identity_registrations[encoded_id]
 
     def getSimpleRegistration(self, identity=None, default=None):
-        # Ensure we're properly quoting URLs
-        encoded_id = identity
-        if (encoded_id.startswith("http:") or encoded_id.startswith("https:")):
-            encoded_id = encodeIdentityURL(encoded_id)
-        return self.identity_registrations.get(encoded_id, default)
+        return self.identity_registrations.get(identity, default)
 
     def getAllRegistrations(self):
         return self.identity_registrations
