@@ -14,7 +14,6 @@ from Products.PluggableAuthService.interfaces.plugins import \
 from plone.openid.interfaces import IOpenIdExtractionPlugin
 from plone.openid.events import OpenIDRegistrationReceivedEvent
 from plone.openid.store import ZopeStore
-from plone.openid.util import encodeIdentityURL
 
 from openid.yadis.discover import DiscoveryFailure
 from openid.consumer.consumer import Consumer, SUCCESS
@@ -162,9 +161,7 @@ class OpenIdPlugin(BasePlugin):
             del query['extractor']
 
             result=consumer.complete(query, self.REQUEST.ACTUAL_URL)
-            # We encode the returned URL to avoid traversal errors with
-            # embedded / characters
-            identity = encodeIdentityURL(result.identity_url)
+            identity = result.identity_url
 
             if result.status==SUCCESS:
                 pas = self._getPAS()

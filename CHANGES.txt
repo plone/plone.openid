@@ -5,14 +5,7 @@ Changelog
 2.1 - unreleased
 ------------------
 
-- Added encodeIdentityURL / decodeIdentityURL utility functions.
-  [davidblewett]
-
 - Various BBB bits moved to an upgrade step.
-  [davidblewett]
-
-- Updated plugin to always encode the returned OpenID identity URL,
-  to avoid traversal issues with embedded / characters.
   [davidblewett]
 
 - Added support for the Simple Registration OpenID extension:

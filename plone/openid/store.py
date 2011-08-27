@@ -9,7 +9,6 @@ from openid.store.interface import OpenIDStore
 from openid.store.nonce import SKEW
 from openid.association import Association
 
-from plone.openid.util import encodeIdentityURL
 
 class ZopeStore(OpenIDStore):
     """Zope OpenID store.
@@ -129,13 +128,9 @@ class ZopeStore(OpenIDStore):
             identity is the identity_url returned by the server
             registration is the dictionary returned by the extensionResponse
         """
-        # Ensure we're properly quoting URLs
-        encoded_id = identity
-        if (encoded_id.startswith("http:") or encoded_id.startswith("https:")):
-            encoded_id = encodeIdentityURL(encoded_id)
-        self.identity_registrations[encoded_id] = \
+        self.identity_registrations[identity] = \
                 PersistentMapping(registration)
-        return self.identity_registrations[encoded_id]
+        return self.identity_registrations[identity]
 
     def getSimpleRegistration(self, identity=None, default=None):
         return self.identity_registrations.get(identity, default)

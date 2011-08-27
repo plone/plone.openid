@@ -1,4 +1,3 @@
-from base64 import urlsafe_b64encode, urlsafe_b64decode
 import random
 
 from Acquisition import aq_get
@@ -36,12 +35,3 @@ def getPASPlugin(context, plugin_type=IExtractionPlugin,
             return plugin_name, plugin
 
     return (None, None)
-
-def encodeIdentityURL(identity_url):
-    # NOTE: the following can still contain =, which might be
-    #       problematic in some cases
-    return '_'.join(['openid', urlsafe_b64encode(identity_url)])
-
-def decodeIdentityURL(user_id):
-    # WARNING: expects a binary, not unicode string
-    return urlsafe_b64decode(user_id.lstrip('openid_'))

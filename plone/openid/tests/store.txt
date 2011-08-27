@@ -101,7 +101,9 @@ the possible fields and store the return mapping.
 
   >>> identity = "http://localhost/someuser"
   >>> registration = {'fullname': 'Some User', 'email': 'some@user.com'}
-  >>> store.storeSimpleRegistration(identity, registration)
+  >>> persistent_reg = store.storeSimpleRegistration(identity, registration)
+  >>> persistent_reg == registration
+  True
   >>> store.getSimpleRegistration(identity) == registration
   True
 

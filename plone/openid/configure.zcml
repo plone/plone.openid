@@ -35,13 +35,4 @@
         handler="plone.openid.upgrades.update_bbb_attributes"
         />
 
-  <genericsetup:upgradeStep
-        destination="001"
-        profile="plone.openid:default"
-        title="Update non-urlencoded usernames"
-        description=""
-        sortkey="2"
-        handler="plone.openid.upgrades.urlencode_usernames"
-        />
-
 </configure>

@@ -1,5 +1,4 @@
 from plone.openid.upgrades import update_bbb_attributes
-from plone.openid.upgrades import urlencode_usernames
 
 
 def importVarious(context):
@@ -8,4 +7,3 @@ def importVarious(context):
         return
 
     update_bbb_attributes(context)
-    urlencode_usernames(context)
