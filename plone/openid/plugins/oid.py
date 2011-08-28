@@ -247,9 +247,13 @@ class OpenIdPlugin(BasePlugin):
             return result
 
         if id is None and login is None:
-            if kw and 'email' in kw:
+            if kw:
                 for identity, sreg in all_regs.iteritems():
-                    if kw['email'].lower() in sreg.get('email').lower():
+                    found = []
+                    for key in kw:
+                        if kw[key].lower() in sreg.get(key).lower():
+                            found.append(key)
+                    if len(found) == len(kw):
                         result.append(self._get_user_info(identity, sreg))
             else:
                 for identity, sreg in all_regs.iteritems():
