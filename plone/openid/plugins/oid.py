@@ -224,18 +224,26 @@ class OpenIdPlugin(BasePlugin):
             return result
 
         all_regs = self.store.getAllRegistrations()
-        if id and not exact_match:
-            for identity, sreg in all_regs.iteritems():
-                if id.lower() not in identity.lower():
-                    continue
-                result.append(self._get_user_info(identity, sreg))
+        if id:
+            if exact_match:
+                for identity, sreg in all_regs.iteritems():
+                    if id == identity:
+                        result.append(self._get_user_info(identity, sreg))
+            else:
+                for identity, sreg in all_regs.iteritems():
+                    if id.lower() in identity.lower():
+                        result.append(self._get_user_info(identity, sreg))
             return result
 
-        if id and exact_match:
-            for identity, sreg in all_regs.iteritems():
-                if id != identity:
-                    continue
-                result.append(self._get_user_info(identity, sreg))
+        if login:
+            if exact_match:
+                for identity, sreg in all_regs.iteritems():
+                    if login == identity:
+                        result.append(self._get_user_info(identity, sreg))
+            else:
+                for identity, sreg in all_regs.iteritems():
+                    if login.lower() in identity.lower():
+                        result.append(self._get_user_info(identity, sreg))
             return result
 
         if id is None and login is None:
