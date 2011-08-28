@@ -226,9 +226,9 @@ class OpenIdPlugin(BasePlugin):
         all_regs = self.store.getAllRegistrations()
         if id:
             if exact_match:
-                for identity, sreg in all_regs.iteritems():
-                    if id == identity:
-                        result.append(self._get_user_info(identity, sreg))
+                sreg = all_regs.get(id, None)
+                if sreg is not None:
+                    result.append(self._get_user_info(id, sreg))
             else:
                 for identity, sreg in all_regs.iteritems():
                     if id.lower() in identity.lower():
@@ -237,9 +237,9 @@ class OpenIdPlugin(BasePlugin):
 
         if login:
             if exact_match:
-                for identity, sreg in all_regs.iteritems():
-                    if login == identity:
-                        result.append(self._get_user_info(identity, sreg))
+                sreg = all_regs.get(login, None)
+                if sreg is not None:
+                    result.append(self._get_user_info(login, sreg))
             else:
                 for identity, sreg in all_regs.iteritems():
                     if login.lower() in identity.lower():
