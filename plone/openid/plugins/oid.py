@@ -1,4 +1,5 @@
 import logging
+from urllib import unquote_plus
 
 from Acquisition import aq_parent
 from AccessControl.SecurityInfo import ClassSecurityInfo
@@ -194,6 +195,17 @@ class OpenIdPlugin(BasePlugin):
 
         return None
 
+    def _get_user_info(self, identity, sreg):
+        user_info = {
+            'title': sreg.get('fullname', identity),
+            'description': sreg.get('nickname', identity),
+            'email': sreg.get('email', '')
+        }
+        user_info.update(sreg)
+        user_info.update({'id': identity, 'login': identity,
+                          'pluginid': self.getId()})
+        return user_info
+
 
     # IUserEnumerationPlugin implementation
     def enumerateUsers(self, id=None, login=None, exact_match=False,
@@ -206,40 +218,40 @@ class OpenIdPlugin(BasePlugin):
         We do this by checking for the exact kind of call the PAS getUserById
         implementation makes
         """
-        if id and login and id!=login:
-            return []
+        result = []
 
+        if id and login and id!=login:
+            return result
+
+        all_regs = self.store.getAllRegistrations()
         if id and not exact_match:
-            return [
-                {'id': identity,
-                 'login': identity,
-                 'pluginid': self.getId()}
-                for identity in self.store.getAllRegistrations().iterkeys()
-                if id.lower() in identity.lower()
-            ]
+            for identity, sreg in all_regs.iteritems():
+                if id.lower() not in identity.lower():
+                    continue
+                result.append(self._get_user_info(identity, sreg))
+            return result
 
         if id and exact_match:
-            return [
-                {'id': identity,
-                 'login': identity,
-                 'pluginid': self.getId()}
-                for identity in self.store.getAllRegistrations().iterkeys()
-                if id == identity
-            ]
+            for identity, sreg in all_regs.iteritems():
+                if id != identity:
+                    continue
+                result.append(self._get_user_info(identity, sreg))
+            return result
 
         if id is None and login is None:
-            return [
-                {'id': identity,
-                 'login': identity,
-                 'pluginid': self.getId()}
-                for identity in self.store.getAllRegistrations().iterkeys()
-            ]
+            if kw and 'email' in kw:
+                for identity, sreg in all_regs.iteritems():
+                    if kw['email'].lower() in sreg.get('email').lower():
+                        result.append(self._get_user_info(identity, sreg))
+            else:
+                for identity, sreg in all_regs.iteritems():
+                    result.append(self._get_user_info(identity, sreg))
+            return result
 
         key=id and id or login
 
         if not (key.startswith("http:") or \
-                key.startswith("https:") or \
-                key.startswith("openid_")):
+                key.startswith("https:")):
             return []
 
         return [ {
@@ -254,13 +266,12 @@ class OpenIdPlugin(BasePlugin):
         user_id = user.getId()
         if not self.use_simple_registration or \
            not (user_id.startswith("http:") or \
-                user_id.startswith("https:") or \
-                user_id.startswith("http%3A") or \
-                user_id.startswith("https%3A")):
+                user_id.startswith("https:")):
             return {}
         else:
             registration = self.store.getSimpleRegistration(user_id, {})
             return registration
+
 
     # IMutablePropertiesPlugin implementation
     # NOTE: we don't formally implement this, as it would mean
