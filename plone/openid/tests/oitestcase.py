@@ -34,6 +34,8 @@ class OpenIdTestCase(PloneSessionTestCase):
             self.app.folder.pas._delObject("openid")
 
         self.app.folder.pas._setObject("openid", OpenIdPlugin("openid"))
+        self.pas = self.app.folder.pas
+        self.openid = self.pas.openid
 
 class FunctionalOpenIdTestCase(ZopeTestCase.Functional, OpenIdTestCase):
     pass

@@ -14,6 +14,10 @@ Changelog
   (use_simple_registration).
   [davidblewett]
 
+- When use_simple_registration is active, we now fully support the
+  enumerateUsers call.
+  [davidblewett]
+
 - Add MANIFEST.in.
   [WouterVH]
 

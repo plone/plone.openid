@@ -206,9 +206,7 @@ class OpenIdPlugin(BasePlugin):
                           'pluginid': self.getId()})
         return user_info
 
-
-    # IUserEnumerationPlugin implementation
-    def enumerateUsers(self, id=None, login=None, exact_match=False,
+    def _legacyEnumerateUsers(self, id=None, login=None, exact_match=False,
             sort_by=None, max_results=None, **kw):
         """Slightly evil enumerator.
 
@@ -218,10 +216,42 @@ class OpenIdPlugin(BasePlugin):
         We do this by checking for the exact kind of call the PAS getUserById
         implementation makes
         """
+        if id and login and id!=login:
+            return []
+
+        if (id and not exact_match) or kw:
+            return []
+
+        key=id and id or login
+
+        if not (key.startswith("http:") or key.startswith("https:")):
+            return []
+
+        return [ {
+                    "id" : key,
+                    "login" : key,
+                    "pluginid" : self.getId(),
+                } ]
+
+    def _processResult(self, sort_by, max_results, result):
+        if sort_by:
+            result.sort(key=lambda x: x.get(sort_by))
+        if max_results:
+            result = result[:max_results]
+        return result
+
+    # IUserEnumerationPlugin implementation
+    def enumerateUsers(self, id=None, login=None, exact_match=False,
+                       sort_by=None, max_results=None, **kw):
         result = []
 
-        if id and login and id!=login:
-            return result
+        if not self.use_simple_registration:
+            return self._legacyEnumerateUsers(id, login, exact_match,
+                                              sort_by, max_results, **kw)
+
+        for key in (id, login):
+            if key is not None and not key:
+                return []
 
         all_regs = self.store.getAllRegistrations()
         if id:
@@ -233,7 +263,7 @@ class OpenIdPlugin(BasePlugin):
                 for identity, sreg in all_regs.iteritems():
                     if id.lower() in identity.lower():
                         result.append(self._get_user_info(identity, sreg))
-            return result
+            return self._processResult(sort_by, max_results, result)
 
         if login:
             if exact_match:
@@ -244,33 +274,29 @@ class OpenIdPlugin(BasePlugin):
                 for identity, sreg in all_regs.iteritems():
                     if login.lower() in identity.lower():
                         result.append(self._get_user_info(identity, sreg))
-            return result
+            return self._processResult(sort_by, max_results, result)
 
-        if id is None and login is None:
-            if kw:
-                for identity, sreg in all_regs.iteritems():
-                    found = []
-                    for key in kw:
-                        if kw[key].lower() in sreg.get(key).lower():
+        if kw:
+            for identity, sreg in all_regs.iteritems():
+                found = []
+                for key in kw:
+                    # IUserEnumerationPlugin says to ignore unknown
+                    # criteria
+                    if exact_match:
+                        sreg_val = sreg.get(key, kw[key])
+                        if kw[key] == sreg_val:
                             found.append(key)
-                    if len(found) == len(kw):
-                        result.append(self._get_user_info(identity, sreg))
-            else:
-                for identity, sreg in all_regs.iteritems():
+                    else:
+                        sreg_val = sreg.get(key, kw[key].lower()).lower()
+                        if kw[key].lower() in sreg_val:
+                            found.append(key)
+                if len(found) == len(kw):
                     result.append(self._get_user_info(identity, sreg))
-            return result
+            return self._processResult(sort_by, max_results, result)
 
-        key=id and id or login
-
-        if not (key.startswith("http:") or \
-                key.startswith("https:")):
-            return []
-
-        return [ {
-                    "id" : key,
-                    "login" : key,
-                    "pluginid" : self.getId(),
-                } ]
+        for identity, sreg in all_regs.iteritems():
+            result.append(self._get_user_info(identity, sreg))
+        return self._processResult(sort_by, max_results, result)
 
 
     # IPropertiesPlugin implementation
