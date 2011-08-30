@@ -93,6 +93,14 @@ class UserSearchTest(OpenIdTestCase,
         results = [info['id'] for info in results]
         self.assertEqual(results, ['http://plone.myopenid.com/member2'])
 
+    def testSearchSequence(self):
+        keys = ['http://plone.myopenid.com/member1',
+                'http://plone.myopenid.com/member2']
+        results = self.openid.enumerateUsers(id=keys)
+        self.assertEqual(len(results), 2)
+        results = self.openid.enumerateUsers(login=keys)
+        self.assertEqual(len(results), 2)
+
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(UserSearchTest))

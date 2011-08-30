@@ -233,17 +233,17 @@ class OpenIdPlugin(BasePlugin):
                     "pluginid" : self.getId(),
                 } ]
 
-    def _processResult(self, sort_by, max_results, result):
+    def _processResults(self, sort_by, max_results, results):
         if sort_by:
-            result.sort(key=lambda x: x.get(sort_by))
+            results.sort(key=lambda x: x.get(sort_by))
         if max_results:
-            result = result[:max_results]
-        return result
+            results = results[:max_results]
+        return results
 
     # IUserEnumerationPlugin implementation
     def enumerateUsers(self, id=None, login=None, exact_match=False,
                        sort_by=None, max_results=None, **kw):
-        result = []
+        results = []
 
         if not self.use_simple_registration:
             return self._legacyEnumerateUsers(id, login, exact_match,
@@ -251,30 +251,36 @@ class OpenIdPlugin(BasePlugin):
 
         for key in (id, login):
             if key is not None and not key:
-                return []
+                return results
 
         all_regs = self.store.getAllRegistrations()
         if id:
-            if exact_match:
-                sreg = all_regs.get(id, None)
-                if sreg is not None:
-                    result.append(self._get_user_info(id, sreg))
-            else:
-                for identity, sreg in all_regs.iteritems():
-                    if id.lower() in identity.lower():
-                        result.append(self._get_user_info(identity, sreg))
-            return self._processResult(sort_by, max_results, result)
+            if isinstance(id, basestring):
+                id = [id]
+            for user_id in id:
+                if exact_match:
+                    sreg = all_regs.get(user_id, None)
+                    if sreg is not None:
+                        results.append(self._get_user_info(user_id, sreg))
+                else:
+                    for identity, sreg in all_regs.iteritems():
+                        if user_id.lower() in identity.lower():
+                            results.append(self._get_user_info(identity, sreg))
+            return self._processResults(sort_by, max_results, results)
 
         if login:
-            if exact_match:
-                sreg = all_regs.get(login, None)
-                if sreg is not None:
-                    result.append(self._get_user_info(login, sreg))
-            else:
-                for identity, sreg in all_regs.iteritems():
-                    if login.lower() in identity.lower():
-                        result.append(self._get_user_info(identity, sreg))
-            return self._processResult(sort_by, max_results, result)
+            if isinstance(login, basestring):
+                login = [login]
+            for login_id in login:
+                if exact_match:
+                    sreg = all_regs.get(login_id, None)
+                    if sreg is not None:
+                        results.append(self._get_user_info(login_id, sreg))
+                else:
+                    for identity, sreg in all_regs.iteritems():
+                        if login_id.lower() in identity.lower():
+                            results.append(self._get_user_info(identity, sreg))
+            return self._processResults(sort_by, max_results, results)
 
         if kw:
             for identity, sreg in all_regs.iteritems():
@@ -291,12 +297,12 @@ class OpenIdPlugin(BasePlugin):
                         if kw[key].lower() in sreg_val:
                             found.append(key)
                 if len(found) == len(kw):
-                    result.append(self._get_user_info(identity, sreg))
-            return self._processResult(sort_by, max_results, result)
+                    results.append(self._get_user_info(identity, sreg))
+            return self._processResults(sort_by, max_results, results)
 
         for identity, sreg in all_regs.iteritems():
-            result.append(self._get_user_info(identity, sreg))
-        return self._processResult(sort_by, max_results, result)
+            results.append(self._get_user_info(identity, sreg))
+        return self._processResults(sort_by, max_results, results)
 
 
     # IPropertiesPlugin implementation
