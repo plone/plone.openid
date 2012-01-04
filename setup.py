@@ -5,7 +5,7 @@ version = '2.0.1'
 setup(name='plone.openid',
       version=version,
       description="OpenID authentication support for PAS",
-      long_description=open("README.txt").read() +
+      long_description=open("README.txt").read() + '\n' +
                        open("CHANGES.txt").read(),
       classifiers=[
           "Environment :: Web Environment",
