@@ -74,10 +74,12 @@ when the current handles are empty.
 Nonces
 ======
 
-OpenId uses nonces, which are basically ids used to track outstanding
-requests. A nonce is build up from a server URL and a salt. In order
-to be able to track old nonces which may be expired a timestamp is
-added to their registration as well.
+OpenId uses nonces, which are basically ids used to track outstanding requests.
+A nonce is build up from a server URL, a timestamp and a salt. The timestamp is
+the time that the nonce was created (to the nearest second). The salt is a
+random string that makes two nonces from the same server issued during the same
+second unique. The timestamp is also used to track when old nonces should be
+expired.
 
 Using nonces the first time results in a True response
 
@@ -86,9 +88,15 @@ Using nonces the first time results in a True response
   >>> store.useNonce("two", now, "salt")
   True
 
-
 If we try to add a nonce which already exists False should be returned:
 
   >>> store.useNonce("two", now, "salt")
   False
 
+But when there is a new request with a new timestamp, using nonces will result
+in a True for a once again:
+
+  >>> store.useNonce("two", now + 60, "salt")
+  True
+  >>> store.useNonce("two", now + 60, "salt")
+  False
