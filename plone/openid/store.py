@@ -80,6 +80,9 @@ class ZopeStore(OpenIDStore):
 
 
     def useNonce(self, server_url, timestamp, salt):
+        if abs(timestamp - time.time()) > SKEW:
+            return False
+
         nonce = (salt, timestamp, server_url)
         if nonce in self.nonces:
             return False

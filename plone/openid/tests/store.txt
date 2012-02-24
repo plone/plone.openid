@@ -100,3 +100,9 @@ in a True for a once again:
   True
   >>> store.useNonce("two", now + 60, "salt")
   False
+
+If the timestamp is not current enough (``openid.store.nonce.SKEW =
+18000``), useNonce should return False:
+
+  >>> store.useNonce("two", now - 18001 , "salt")
+  False
