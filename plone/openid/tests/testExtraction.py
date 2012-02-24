@@ -45,7 +45,31 @@ class TestOpenIdExtraction(unittest.TestCase):
         plugin.REQUEST.form["__ac_identity_url"]=""
         creds=plugin.extractCredentials(plugin.REQUEST)
         self.failIf(creds.has_key("__ac_identity_url"))
-        
+
+
+    def testLeadingWhiteSpacesInIdentityExtraction(self):
+        """Test coverage for bug #11044. Cope with leading/trailing spaces.
+        If a user has no concept of "trailing whitespace", it's hard to make
+        him care about not hitting space in the wrong place."""
+        plugin=self.createPlugin()
+        plugin.REQUEST.form.update(self.server_response)
+        plugin.REQUEST.form["__ac_identity_url"]=" %s" % self.identity
+        self.assertRaises(Redirect,
+                plugin.extractCredentials,
+                plugin.REQUEST)
+
+
+    def testTrailingWhiteSpacesInIdentityExtraction(self):
+        """Test coverage for bug #11044. Cope with leading/trailing spaces.
+        If a user has no concept of "trailing whitespace", it's hard to make
+        him care about not hitting space in the wrong place."""
+        plugin=self.createPlugin()
+        plugin.REQUEST.form.update(self.server_response)
+        plugin.REQUEST.form["__ac_identity_url"]="%s " % self.identity
+        self.assertRaises(Redirect,
+                plugin.extractCredentials,
+                plugin.REQUEST)
+
 
     def testRedirect(self):
         """Test if a redirect is generated for a login attempt.

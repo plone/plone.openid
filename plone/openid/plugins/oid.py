@@ -122,8 +122,8 @@ class OpenIdPlugin(BasePlugin):
         from it, or a redirect from an OpenID server.
         """
         creds={}
-        identity=request.form.get("__ac_identity_url", None)
-        if identity is not None and identity != "":
+        identity=request.form.get("__ac_identity_url", "").strip()
+        if identity != "":
             self.initiateChallenge(identity)
             return creds
             
