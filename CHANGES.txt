@@ -1,10 +1,14 @@
 Changelog
 =========
 
+- useNonce returns False when timestamp is not recent enough
+  [datakurre]
+
 - Store timestamp with nonce to support Open ID providers, which use
   salt only when timestamps are equal between requests.
   This fixes http://dev.plone.org/plone/ticket/11987
   [datakurre]
+
 
 2.0.1 - unreleased
 ------------------
