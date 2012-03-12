@@ -5,6 +5,10 @@ Changelog
 2.0.1 - unreleased
 ------------------
 
+- Fixed to store timestamp as part of nonce. This fixes
+  http://dev.plone.org/plone/ticket/11987
+  [datakurre]
+
 - Add MANIFEST.in.
   [WouterVH]
 
