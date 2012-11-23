@@ -1,6 +1,10 @@
 Changelog
 =========
 
+- Fixed extractCredentials to strip whitespaces around __ac_identity_url.
+  This fixes http://dev.plone.org/plone/ticket/11044
+  [datakurre]
+
 
 2.0.1 - unreleased
 ------------------
