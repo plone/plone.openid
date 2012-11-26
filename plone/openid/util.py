@@ -1,15 +1,5 @@
-import random
+from plone.openid import django_random
+
 
 def GenerateSecret(length=16):
-    letters ="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    letters+="abcdefghijklmnopqrstuvwxyz"
-    letters+="01234567890!@#$%^&*()"
-
-    secret=""
-    for i in range(length):
-        secret+=random.choice(letters)
-
-    return secret
-
-    
-
+	return django_random.get_random_string(length)

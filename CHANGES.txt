@@ -1,6 +1,10 @@
 Changelog
 =========
 
+- Use system random when available. This is part of the fix for
+  https://plone.org/products/plone/security/advisories/20121106/24
+  [davisagli]
+
 - Fixed extractCredentials to strip whitespaces around __ac_identity_url.
   This fixes http://dev.plone.org/plone/ticket/11044
   [datakurre]
