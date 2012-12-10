@@ -10,7 +10,7 @@ Changelog
   [datakurre]
 
 
-2.0.1 - unreleased
+2.0.1 (2012-12-09)
 ------------------
 
 - Fixed to store timestamp as part of nonce. This fixes
