@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.0.2 (unreleased)
+------------------
+
+- Replace deprecated test assert statements.
+  [timo]
+
 - Use system random when available. This is part of the fix for
   https://plone.org/products/plone/security/advisories/20121106/24
   [davisagli]
@@ -8,12 +14,6 @@ Changelog
 - Fixed extractCredentials to strip whitespaces around __ac_identity_url.
   This fixes http://dev.plone.org/plone/ticket/11044
   [datakurre]
-
-
-2.0.2 (unreleased)
-------------------
-
-- Nothing changed yet.
 
 
 2.0.1 (2012-12-09)

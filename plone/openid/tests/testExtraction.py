@@ -44,7 +44,7 @@ class TestOpenIdExtraction(unittest.TestCase):
         plugin.REQUEST.form.update(self.server_response)
         plugin.REQUEST.form["__ac_identity_url"]=""
         creds=plugin.extractCredentials(plugin.REQUEST)
-        self.failIf(creds.has_key("__ac_identity_url"))
+        self.assertFalse(creds.has_key("__ac_identity_url"))
 
     @unittest.skip("This test fails randomly on Jenkins")
     def testLeadingWhiteSpacesInIdentityExtraction(self):
