@@ -8,7 +8,7 @@
 
     <p class="form-help">
       The OpenID plugin adds support for the OpenID authentication system
-      to Zope. 
+      to Zope.
     </p>
 
     <form action="addOpenIdPlugin" method="post">

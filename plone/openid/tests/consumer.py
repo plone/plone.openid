@@ -24,7 +24,7 @@ class MockConsumer:
     def complete(self, credentials, current_url):
         status=SUCCESS
         message="authentication completed succesfully"
-        
+
         if credentials.has_key("openid.identity") and credentials["openid.identity"] == "":
             # if the python openid is passed an identity of an empty string
             # an IndexError is raised in the depths of its XRI identification
@@ -42,7 +42,7 @@ class MockConsumer:
                 if field not in credentials:
                     message="field missing"
                     status=FAILURE
-                
+
 
         return MockAuthRequest(status=status,
                                 message=message,

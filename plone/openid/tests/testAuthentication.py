@@ -19,7 +19,7 @@ class TestOpenIdAuthentication(unittest.TestCase):
             credentials[field]=field
         credentials["openid.identity"]=self.identity
         credentials["openid.source"]="server"
-        
+
         # this isn't part of the server response, but is added to the
         # credentials by PAS
         credentials["extractor"] = "openid"
@@ -36,8 +36,8 @@ class TestOpenIdAuthentication(unittest.TestCase):
 
 
     def testEmptyStringIdentityAuthentication(self):
-        """Test coverage for bug #7176, where an 
-           "" (i.e. an empty string) identity passed to 
+        """Test coverage for bug #7176, where an
+           "" (i.e. an empty string) identity passed to
            authenticationCredentials should return fail authentication
         """
         credentials=self.buildServerResponse()

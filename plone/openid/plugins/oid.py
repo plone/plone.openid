@@ -13,7 +13,7 @@ from openid.yadis.discover import DiscoveryFailure
 from openid.consumer.consumer import Consumer, SUCCESS
 import logging
 
-manage_addOpenIdPlugin = PageTemplateFile("../www/openidAdd", globals(), 
+manage_addOpenIdPlugin = PageTemplateFile("../www/openidAdd", globals(),
                 __name__="manage_addOpenIdPlugin")
 
 logger = logging.getLogger("PluggableAuthService")
@@ -91,7 +91,7 @@ class OpenIdPlugin(BasePlugin):
             logger.info("openid consumer error for identity %s: %s",
                     identity_url, e.why)
             pass
-            
+
         if return_to is None:
             return_to=self.REQUEST.form.get("came_from", None)
         if not return_to or 'janrain_nonce' in return_to:
@@ -126,7 +126,7 @@ class OpenIdPlugin(BasePlugin):
         if identity != "":
             self.initiateChallenge(identity)
             return creds
-            
+
         self.extractOpenIdServerResponse(request, creds)
         return creds
 
@@ -138,15 +138,15 @@ class OpenIdPlugin(BasePlugin):
 
         if credentials["openid.source"]=="server":
             consumer=self.getConsumer()
-            
+
             # remove the extractor key that PAS adds to the credentials,
             # or python-openid will complain
             query = credentials.copy()
             del query['extractor']
-            
+
             result=consumer.complete(query, self.REQUEST.ACTUAL_URL)
             identity=result.identity_url
-            
+
             if result.status==SUCCESS:
                 self._getPAS().updateCredentials(self.REQUEST,
                         self.REQUEST.RESPONSE, identity, "")

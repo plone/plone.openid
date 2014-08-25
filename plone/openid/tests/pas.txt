@@ -12,7 +12,7 @@ Next we create a fake request:
   >>> plugin=makerequest(plugin)
   >>> request=plugin.REQUEST
 
-Lets  log all exceptions, which is useful for debugging. 
+Lets  log all exceptions, which is useful for debugging.
 
   >>> self.portal.error_log._ignored_exceptions = ()
   >>> self.portal.left_slots = self.portal.right_slots = []

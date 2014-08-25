@@ -5,7 +5,7 @@ Introduction
 ------------
 
 This product implements OpenID_ authentication support for Zope_ via a
-Pluggable Authentication Service plugin. 
+Pluggable Authentication Service plugin.
 
 Using this package everyone with an OpenID authentity will be able to
 login on your Zope site. OpenID accounts are not given any extra roles
@@ -23,7 +23,7 @@ The OpenID authentication flow goes like this:
 
 - user submits a OpenID identity (which is a URL) to you site. This is
   done through a HTTP POST using a form variable called ``__ac_identity_url``
-- the PAS plugin sees this variable during credential extraction and 
+- the PAS plugin sees this variable during credential extraction and
   initiates a OpenID challenge. This results in a transaction commit and
   a redirect to an OpenID server.
 - the OpenID server takes care of authenticating the user and redirect the
