@@ -5,7 +5,6 @@ try:
 except pkg_resources.DistributionNotFound:
     HAS_OPENID = False
 else:
-    etxrd    # pyflakes
     HAS_OPENID = True
 
 import socket
