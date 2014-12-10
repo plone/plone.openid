@@ -1,12 +1,9 @@
-import pkg_resources
-
 try:
-    pkg_resources.get_distribution('openid.yadis')
-except pkg_resources.DistributionNotFound:
-    HAS_OPENID = False
-else:
-    HAS_OPENID = True
+    from openid.yadis import etxrd
+    HAS_OPENID=True
+except:
+    HAS_OPENID=False
 
 import socket
-HAS_SSL = hasattr(socket, "ssl")
+HAS_SSL=hasattr(socket, "ssl")
 del socket
