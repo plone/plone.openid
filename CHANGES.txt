@@ -4,7 +4,8 @@ Changelog
 2.0.4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Removed unused testing code with dependency to PloneTestCase
+  [tomgross]
 
 
 2.0.3 (2015-02-11)
