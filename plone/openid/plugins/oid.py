@@ -143,6 +143,12 @@ class OpenIdPlugin(BasePlugin):
             # or python-openid will complain
             query = credentials.copy()
             del query['extractor']
+            if 'login' in query and query['login'] is None:
+                # PAS has tried to lowercase the login, but login was not in
+                # the credentials, so it is now None.
+                # This would result in an AttributeError in consumer.complete,
+                # so we remove it.
+                del query['login']
 
             result=consumer.complete(query, self.REQUEST.ACTUAL_URL)
             identity=result.identity_url

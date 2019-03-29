@@ -4,7 +4,9 @@ Changelog
 2.0.5 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fixed error caused by PAS inserting ``login=None`` in the openid query.
+  Fixes `issue 10 <https://github.com/plone/plone.openid/issues/10>`_.
+  [maurits]
 
 
 2.0.4 (2015-03-21)
