@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.5 (unreleased)
+2.0.5 (2019-03-29)
 ------------------
 
 - Fixed error caused by PAS inserting ``login=None`` in the openid query.
